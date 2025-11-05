@@ -5,9 +5,19 @@ import {
 import { getPublishedPosts } from "@/lib/notion";
 
 let cachedIndexes: AdvancedIndex[] = [];
+let lastFetchTime = 0;
+const CACHE_TTL = 0; // 0 = no cache, always fetch fresh (or set to 60000 for 1 minute)
 
 async function getSearchIndexes(): Promise<AdvancedIndex[]> {
-  if (cachedIndexes.length) return cachedIndexes;
+  const now = Date.now();
+
+  // Check if cache is still valid
+  if (cachedIndexes.length && (now - lastFetchTime) < CACHE_TTL) {
+    console.log("Returning cached search indexes");
+    return cachedIndexes;
+  }
+
+  console.log("Fetching fresh search indexes from Notion");
 
   try {
     const response = await getPublishedPosts();
@@ -31,12 +41,14 @@ async function getSearchIndexes(): Promise<AdvancedIndex[]> {
         headings: [],
       },
     }));
+
+    lastFetchTime = now;
   } catch (error) {
     console.error("Error fetching posts for search index:", error);
     cachedIndexes = [];
   }
 
-  console.log("cachedIndexes", cachedIndexes);
+  console.log("cachedIndexes count:", cachedIndexes.length);
 
   return cachedIndexes;
 }
