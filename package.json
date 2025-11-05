@@ -29,8 +29,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-notion-x": "^7.3.0",
-    "tailwind-merge": "^3.3.0",
-    "zod": "^4.1.12"
+    "tailwind-merge": "^3.3.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.7",

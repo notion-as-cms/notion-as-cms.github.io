@@ -4,15 +4,12 @@ import {
   frontmatterSchema,
   transformMDX,
 } from '@fumadocs/content-collections/configuration';
-import { z } from 'zod';
 
 const docs = defineCollection({
   name: 'docs',
   directory: 'content/docs',
   include: '**/*.mdx',
-  schema: frontmatterSchema.extend({
-    content: z.string(),
-  }),
+  schema: frontmatterSchema,
   transform: transformMDX,
 });
 
