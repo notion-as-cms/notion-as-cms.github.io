@@ -104,7 +104,7 @@ jobs:
       - name: Test with local HTTP server
         run: |
           echo "Starting local server to test static files..."
-          pnpm serve out &
+          pnpm run serve &
           SERVER_PID=$!
           sleep 5
 
@@ -113,11 +113,11 @@ jobs:
             echo "✅ Static site serves successfully"
           else
             echo "❌ Failed to serve static site"
-            kill $SERVER_PID
+            kill $SERVER_PID 2>/dev/null || true
             exit 1
           fi
 
-          kill $SERVER_PID
+          kill $SERVER_PID 2>/dev/null || true
 
       - name: Upload static build artifacts
         uses: actions/upload-artifact@v4
