@@ -108,7 +108,7 @@
       "path": ".env.example",
       "content": "# Notion API Configuration\n# Get your API key from https://www.notion.so/my-integrations\nNOTION_API_KEY=your_notion_api_key_here\n\n# Notion Blog Database ID\n# The ID of your Notion database containing blog posts\n# You can find this in the URL of your database: notion.so/.../{DATABASE_ID}?v=...\nNOTION_BLOG_DATABASE_ID=your_blog_database_id_here\n\n# Notion Tag Database ID\n# The ID of your Notion database containing tags\nNOTION_TAG_DATABASE_ID=your_tag_database_id_here\n",
       "type": "registry:file",
-      "target": ".env.example"
+      "target": "~/.env.example"
     }
   ],
   "envVars": {
