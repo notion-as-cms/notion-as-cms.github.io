@@ -23,9 +23,6 @@ import {
 
 export { generateBlogStaticParams as generateStaticParams };
 
-// Force fresh data fetch on every build - don't use Next.js cache
-export const revalidate = 0;
-
 // Main page component
 export default async function Page(props: {
   params: Promise<{ slug?: string[] }>;
