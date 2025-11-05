@@ -75,6 +75,24 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Build Registry
+        run: pnpm registry:build
+
+      - name: Validate Registry Build
+        run: |
+          echo "Validating registry build..."
+          if [ ! -f "public/r/notion-blog.json" ]; then
+            echo "❌ Error: public/r/notion-blog.json not found"
+            exit 1
+          fi
+          if [ ! -f "public/r/registry.json" ]; then
+            echo "❌ Error: public/r/registry.json not found"
+            exit 1
+          fi
+          echo "✅ Registry files generated successfully"
+          echo "Registry files:"
+          ls -lh public/r/
+
       - name: Build with Next.js
         run: pnpm build
         env:
