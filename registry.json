@@ -1,0 +1,210 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "notion-blog-cms",
+  "homepage": "https://notion-as-cms.github.io",
+  "items": [
+    {
+      "name": "blog-post",
+      "type": "registry:block",
+      "title": "Notion Blog Post",
+      "description": "A comprehensive blog post component that renders Notion content with support for cover images, tags, table of contents, and rich text formatting.",
+      "registryDependencies": [
+        "pagination",
+        "renderer"
+      ],
+      "dependencies": [
+        "@notionhq/client@3.1.1",
+        "notion-compat@7.3.0",
+        "notion-utils@7.3.0",
+        "notion-types@7.3.0",
+        "react-notion-x@7.3.0",
+        "fumadocs-ui@16.0.7",
+        "fumadocs-core@16.0.7",
+        "lucide-react@0.511.0",
+        "prismjs@1.30.0"
+      ],
+      "envVars": [
+        {
+          "name": "NOTION_API_KEY",
+          "description": "Your Notion integration API key",
+          "required": true
+        },
+        {
+          "name": "NOTION_BLOG_DATABASE_ID",
+          "description": "The ID of your Notion database containing blog posts",
+          "required": true
+        },
+        {
+          "name": "NOTION_TAG_DATABASE_ID",
+          "description": "The ID of your Notion database containing tags",
+          "required": true
+        }
+      ],
+      "files": [
+        {
+          "path": "registry/default/notion-blog/components/blog-post.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "blog-list",
+      "type": "registry:block",
+      "title": "Notion Blog List",
+      "description": "A blog listing component that displays posts from Notion with support for pagination, filtering by tags, and customizable layout.",
+      "registryDependencies": [
+        "post-list",
+        "notion-mappers"
+      ],
+      "dependencies": [
+        "@notionhq/client@3.1.1",
+        "notion-compat@7.3.0",
+        "notion-types@7.3.0"
+      ],
+      "files": [
+        {
+          "path": "registry/default/notion-blog/components/blog-list.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "post-list",
+      "type": "registry:component",
+      "title": "Post List",
+      "description": "A component for displaying a list of blog posts with card layout, author info, date, tags, and pagination support.",
+      "registryDependencies": [
+        "pagination"
+      ],
+      "dependencies": [
+        "lucide-react@0.511.0"
+      ],
+      "files": [
+        {
+          "path": "registry/default/notion-blog/components/post-list.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "pagination",
+      "type": "registry:ui",
+      "title": "Pagination",
+      "description": "A pagination component with previous/next buttons and page indicators for navigating through blog posts.",
+      "dependencies": [
+        "lucide-react@0.511.0"
+      ],
+      "files": [
+        {
+          "path": "registry/default/notion-blog/components/pagination.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "renderer",
+      "type": "registry:component",
+      "title": "Notion Renderer",
+      "description": "A client-side Notion content renderer with syntax highlighting support for multiple programming languages using Prism.js.",
+      "dependencies": [
+        "react-notion-x@7.3.0",
+        "prismjs@1.30.0",
+        "@types/prismjs@1.26.5"
+      ],
+      "files": [
+        {
+          "path": "registry/default/notion-blog/components/renderer.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "notion",
+      "type": "registry:lib",
+      "title": "Notion Client",
+      "description": "Core Notion API client utilities for fetching pages, posts, and tags from your Notion workspace.",
+      "dependencies": [
+        "@notionhq/client@3.1.1",
+        "notion-compat@7.3.0"
+      ],
+      "envVars": [
+        {
+          "name": "NOTION_API_KEY",
+          "description": "Your Notion integration API key",
+          "required": true
+        },
+        {
+          "name": "NOTION_BLOG_DATABASE_ID",
+          "description": "The ID of your Notion database containing blog posts",
+          "required": true
+        },
+        {
+          "name": "NOTION_TAG_DATABASE_ID",
+          "description": "The ID of your Notion database containing tags",
+          "required": true
+        }
+      ],
+      "files": [
+        {
+          "path": "registry/default/notion-blog/lib/notion.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "notion-mappers",
+      "type": "registry:lib",
+      "title": "Notion Mappers",
+      "description": "Utility functions for mapping Notion API responses to blog post data structures.",
+      "files": [
+        {
+          "path": "registry/default/notion-blog/lib/notion-mappers.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "notion-utils",
+      "type": "registry:lib",
+      "title": "Notion Utilities",
+      "description": "Helper utilities for working with Notion blocks and finding page blocks in record maps.",
+      "dependencies": [
+        "notion-types@7.3.0"
+      ],
+      "files": [
+        {
+          "path": "registry/default/notion-blog/lib/notion-utils.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "constants",
+      "type": "registry:lib",
+      "title": "Constants",
+      "description": "Configuration constants for the blog, including posts per page settings.",
+      "files": [
+        {
+          "path": "registry/default/notion-blog/lib/constants.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "notion-types",
+      "type": "registry:lib",
+      "title": "Notion Types",
+      "description": "TypeScript type definitions for Notion blog components, including blog posts, pages, tags, and component props.",
+      "dependencies": [
+        "notion-types@7.3.0",
+        "@notionhq/client@3.1.1"
+      ],
+      "files": [
+        {
+          "path": "registry/default/notion-blog/types/notion.ts",
+          "type": "registry:lib"
+        }
+      ]
+    }
+  ]
+}
