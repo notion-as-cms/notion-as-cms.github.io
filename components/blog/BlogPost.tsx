@@ -123,6 +123,7 @@ export function BlogPost({ recordMap }: BlogPostProps) {
         sidebar={{ enabled: false, prefetch: false, tabs: false }}
         containerProps={{
           className: cn(
+            "blog",
             "flex-row-reverse",
             "relative container [--fd-nav-height:calc(var(--spacing)*14)] md:[--fd-nav-height:57px] p-0"
           ),
