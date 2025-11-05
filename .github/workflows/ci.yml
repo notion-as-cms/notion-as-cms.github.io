@@ -1,0 +1,106 @@
+name: CI - Build Check
+
+on:
+  push:
+    branches-ignore:
+      - main # Deploy workflow handles main branch
+  pull_request:
+    branches:
+      - main
+      - develop
+
+# Cancel in-progress runs when a new workflow run is triggered
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-check:
+    name: Check Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        run: |
+          echo "store-path=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.store-path }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Restore Next.js cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_SITE_URL: notion-as-cms.github.io
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          NOTION_BLOG_DATABASE_ID: ${{ secrets.NOTION_BLOG_DATABASE_ID }}
+          NOTION_TAG_DATABASE_ID: ${{ secrets.NOTION_TAG_DATABASE_ID }}
+          NOTION_AUTHOR_DATABASE_ID: ${{ secrets.NOTION_AUTHOR_DATABASE_ID }}
+
+      - name: Validate static export
+        run: |
+          echo "Validating static export..."
+
+          # Check if out directory exists
+          if [ ! -d "out" ]; then
+            echo "❌ Error: 'out' directory not found"
+            exit 1
+          fi
+
+          # Check for index.html
+          if [ ! -f "out/index.html" ]; then
+            echo "❌ Error: 'out/index.html' not found"
+            exit 1
+          fi
+
+          # Check for _next directory
+          if [ ! -d "out/_next" ]; then
+            echo "❌ Error: 'out/_next' directory not found"
+            exit 1
+          fi
+
+          echo "✅ Static export validation passed"
+          echo ""
+          echo "Build output:"
+          ls -lah out/
+          echo ""
+          echo "Total files: $(find out -type f | wc -l)"
+
+      - name: Upload build artifacts (for PR review)
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: ./out
+          retention-days: 7
