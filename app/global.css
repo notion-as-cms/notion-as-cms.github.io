@@ -126,15 +126,22 @@
 }
 
 .blog {
-  #nd-page {
-    @apply col-span-4 xl:col-span-3 order-last;
+  #nd-toc {
+    /* @apply bg-yellow-200; */
+    /* inset-inline-end: unset !important; */
+    /* top: unset !important; */
   }
 
-  #nd-toc {
-    @apply mx-auto px-4 lg:px-6;
-    /* @apply mx-auto; */
+  /* #nd-page {
+    @apply col-span-4 xl:col-span-3 order-last;
+  } */
+
+  /* #nd-toc {
+    @apply relative mx-auto px-4 lg:px-6;
+    inset-inline-end: unset;
+    top: unset;
     div {
       @apply pe-0;
     }
-  }
+  } */
 }
