@@ -1,9 +1,9 @@
 import { Renderer } from "./renderer";
-import { findPageBlock } from "@/lib/notion-utils";
+import { findPageBlock } from "@/registry/default/notion-blog/lib/notion-utils";
 import { getPageTableOfContents } from "notion-utils";
 import Image from "next/image";
 import Link from "next/link";
-import type { Tag } from "@/types/notion";
+import type { Tag } from "@/registry/default/notion-blog/types/notion";
 import {
   DocsPage,
   DocsBody,
@@ -124,47 +124,39 @@ export function BlogPost({ recordMap }: BlogPostProps) {
           children: [],
         }}
         sidebar={{ enabled: false, prefetch: false, tabs: false }}
-        containerProps={{
-          className: cn(
-            "blog",
-            "flex-row-reverse",
-            "relative container [--fd-nav-height:calc(var(--spacing)*14)] md:[--fd-nav-height:57px] p-0"
-          ),
-        }}
       >
-        <div className="grid grid-cols-4">
-          <DocsPage
-            toc={toc}
-            full={false}
-            footer={{ enabled: false }}
-            tableOfContent={{
-              style: "clerk",
-              single: false,
-            }}
-            article={{
-              className:
-                "!m-[unset] max-w-none bg-zinc-50/50 dark:bg-zinc-900/50 py-8 md:py-12",
-            }}
-          >
-            <DocsBody>
-              <div
-                className="prose dark:prose-invert max-w-none"
-                style={
-                  {
-                    "--notion-max-width": "100%",
-                  } as React.CSSProperties
-                }
-              >
-                <Renderer
-                  recordMap={recordMap}
-                  fullPage={false}
-                  darkMode={false}
-                  showTableOfContents={false}
-                />
-              </div>
-            </DocsBody>
-          </DocsPage>
-        </div>
+        <DocsPage
+          // toc={toc}
+          full={false}
+          footer={{ enabled: false }}
+          tableOfContent={{
+            // style: "clerk",
+            single: false,
+          }}
+          container={{
+            className: cn(
+              "bg-zinc-50/50 dark:bg-zinc-900/50 !container px-4 lg:px-6"
+            ),
+          }}
+        >
+          <DocsBody>
+            <div
+              className="prose dark:prose-invert max-w-none"
+              style={
+                {
+                  "--notion-max-width": "100%",
+                } as React.CSSProperties
+              }
+            >
+              <Renderer
+                recordMap={recordMap}
+                fullPage={false}
+                darkMode={false}
+                showTableOfContents={false}
+              />
+            </div>
+          </DocsBody>
+        </DocsPage>
       </DocsLayout>
     </>
   );

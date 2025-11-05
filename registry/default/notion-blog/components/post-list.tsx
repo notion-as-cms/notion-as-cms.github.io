@@ -1,7 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { Pagination } from "@/components/blog/pagination";
-import type { BlogPost, PostListProps } from "@/types/notion";
+import { Pagination } from "./pagination";
+import type { BlogPost, PostListProps } from "@/registry/default/notion-blog/types/notion";
 
 export function PostList({
   posts,

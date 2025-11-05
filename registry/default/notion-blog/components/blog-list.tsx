@@ -1,7 +1,7 @@
-import { PostList } from "./PostList";
-import { mapNotionPostToBlogPost } from "@/lib/notion-mappers";
-import type { BlogPost, BlogListProps } from "@/types/notion";
-import { POSTS_PER_PAGE } from "@/lib/constants";
+import { PostList } from "./post-list";
+import { mapNotionPostToBlogPost } from "@/registry/default/notion-blog/lib/notion-mappers";
+import type { BlogPost, BlogListProps } from "@/registry/default/notion-blog/types/notion";
+import { POSTS_PER_PAGE } from "@/registry/default/notion-blog/lib/constants";
 
 export function BlogList({
   posts,
