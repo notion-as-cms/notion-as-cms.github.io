@@ -2,7 +2,7 @@ import {
   createSearchAPI,
   type AdvancedIndex,
 } from "fumadocs-core/search/server";
-import { getPublishedPosts } from "@/lib/notion";
+import { getPublishedPosts } from "@/registry/default/notion-blog/lib/notion";
 
 let cachedIndexes: AdvancedIndex[] = [];
 let lastFetchTime = 0;
