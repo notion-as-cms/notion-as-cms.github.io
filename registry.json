@@ -30,72 +30,72 @@
       },
       "files": [
         {
-          "path": "registry/default/notion-blog/components/blog-post.tsx",
+          "path": "components/blog/BlogPost.tsx",
           "type": "registry:component",
-          "target": "components/blog/blog-post.tsx"
+          "target": "components/blog/BlogPost.tsx"
         },
         {
-          "path": "registry/default/notion-blog/components/blog-list.tsx",
+          "path": "components/blog/BlogList.tsx",
           "type": "registry:component",
-          "target": "components/blog/blog-list.tsx"
+          "target": "components/blog/BlogList.tsx"
         },
         {
-          "path": "registry/default/notion-blog/components/post-list.tsx",
+          "path": "components/blog/PostList.tsx",
           "type": "registry:component",
-          "target": "components/blog/post-list.tsx"
+          "target": "components/blog/PostList.tsx"
         },
         {
-          "path": "registry/default/notion-blog/components/pagination.tsx",
+          "path": "components/blog/pagination.tsx",
           "type": "registry:component",
           "target": "components/blog/pagination.tsx"
         },
         {
-          "path": "registry/default/notion-blog/components/renderer.tsx",
+          "path": "components/blog/renderer.tsx",
           "type": "registry:component",
           "target": "components/blog/renderer.tsx"
         },
         {
-          "path": "registry/default/notion-blog/lib/notion.ts",
+          "path": "lib/notion.ts",
           "type": "registry:lib",
           "target": "lib/notion.ts"
         },
         {
-          "path": "registry/default/notion-blog/lib/notion-mappers.ts",
+          "path": "lib/notion-mappers.ts",
           "type": "registry:lib",
           "target": "lib/notion-mappers.ts"
         },
         {
-          "path": "registry/default/notion-blog/lib/notion-utils.ts",
+          "path": "lib/notion-utils.ts",
           "type": "registry:lib",
           "target": "lib/notion-utils.ts"
         },
         {
-          "path": "registry/default/notion-blog/lib/constants.ts",
+          "path": "lib/constants.ts",
           "type": "registry:lib",
           "target": "lib/constants.ts"
         },
         {
-          "path": "registry/default/notion-blog/lib/page-utils.ts",
+          "path": "lib/page-utils.ts",
           "type": "registry:lib",
           "target": "lib/page-utils.ts"
         },
         {
-          "path": "registry/default/notion-blog/lib/static-params.ts",
+          "path": "lib/static-params.ts",
           "type": "registry:lib",
           "target": "lib/static-params.ts"
         },
         {
-          "path": "registry/default/notion-blog/types/notion.ts",
+          "path": "types/notion.ts",
           "type": "registry:lib",
           "target": "types/notion.ts"
         },
         {
-          "path": "registry/default/notion-blog/app/blog/[[...slug]]/page.tsx",
+          "path": "app/(home)/blog/[[...slug]]/page.tsx",
           "type": "registry:page",
           "target": "app/blog/[[...slug]]/page.tsx"
         },
         {
-          "path": "registry/default/notion-blog/app/blog/layout.tsx",
+          "path": "app/(home)/blog/layout.tsx",
           "type": "registry:page",
           "target": "app/blog/layout.tsx"
         },
