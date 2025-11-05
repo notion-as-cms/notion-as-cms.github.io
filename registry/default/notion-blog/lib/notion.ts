@@ -5,7 +5,7 @@ import {
   PageObjectResponse,
   RichTextItemResponse,
 } from "@notionhq/client/build/src/api-endpoints";
-import type { PageInfo, Tag } from "@/registry/default/notion-blog/types/notion";
+import type { PageInfo, Tag } from "@/types/notion";
 
 export const notion = new Client({ auth: process.env.NOTION_API_KEY });
 

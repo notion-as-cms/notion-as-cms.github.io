@@ -1,4 +1,4 @@
-import type { BlogPost, NotionPage, Tag } from "@/registry/default/notion-blog/types/notion";
+import type { BlogPost, NotionPage, Tag } from "@/types/notion";
 
 export function isNotionPage(page: any): page is NotionPage {
   return page && typeof page === "object" && "properties" in page;
