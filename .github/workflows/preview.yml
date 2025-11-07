@@ -69,6 +69,10 @@ jobs:
           NOTION_AUTHOR_DATABASE_ID: ${{ secrets.NOTION_AUTHOR_DATABASE_ID }}
         run: pnpm build
 
+      - name: Add .nojekyll file
+        if: github.event.action != 'closed'
+        run: touch out/.nojekyll
+
       - name: Deploy preview
         uses: rossjrw/pr-preview-action@v1
         with:

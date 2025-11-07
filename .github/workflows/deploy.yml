@@ -97,6 +97,9 @@ jobs:
           NOTION_TAG_DATABASE_ID: ${{ secrets.NOTION_TAG_DATABASE_ID }}
           NOTION_AUTHOR_DATABASE_ID: ${{ secrets.NOTION_AUTHOR_DATABASE_ID }}
 
+      - name: Add .nojekyll file
+        run: touch out/.nojekyll
+
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
