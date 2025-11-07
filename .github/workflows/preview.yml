@@ -17,6 +17,15 @@ jobs:
       contents: write
       pull-requests: write
     steps:
+      - name: Wait for CI to pass
+        if: github.event.action != 'closed'
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          check-name: 'Check Build'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+
       - name: Checkout
         if: github.event.action != 'closed'
         uses: actions/checkout@v4
