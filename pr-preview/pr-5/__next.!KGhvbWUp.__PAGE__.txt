@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[50051,["/pr-preview/pr-5/_next/static/chunks/64586448c48acb55.js","/pr-preview/pr-5/_next/static/chunks/7feea7095cedf916.js","/pr-preview/pr-5/_next/static/chunks/133a12495e228f4f.js","/pr-preview/pr-5/_next/static/chunks/8232b82d53368e0a.js","/pr-preview/pr-5/_next/static/chunks/69012faf1b35248d.js","/pr-preview/pr-5/_next/static/chunks/9b8388c142683c2e.js"],""]
+3:I[41050,["/pr-preview/pr-5/_next/static/chunks/ec39348990c3a291.js","/pr-preview/pr-5/_next/static/chunks/e612c3809afb78cf.js"],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"yXiqa2dw2sMZnla3lsbXm","rsc":["$","$1","c",{"children":[["$","main",null,{"className":"flex flex-1 flex-col justify-center text-center","children":[["$","h1",null,{"className":"mb-4 text-2xl font-bold","children":"Hello World"}],["$","p",null,{"className":"text-fd-muted-foreground","children":["You can open"," ",["$","$L2",null,{"href":"/docs","className":"text-fd-foreground font-semibold underline","children":"/docs"}]," ","and see the documentation."]}]]}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null
