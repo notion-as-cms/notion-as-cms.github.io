@@ -3,13 +3,13 @@ import {
   getPageBySlug,
   getPublishedPosts,
   getTags,
-} from "@/lib/notion";
-import { BlogList } from "@/components/blog/BlogList";
-import { BlogPost } from "@/components/blog/BlogPost";
+} from "@/registry/default/notion-blog/lib/notion";
+import { BlogList } from "@/registry/default/notion-blog/components/blog-list";
+import { BlogPost } from "@/registry/default/notion-blog/components/blog-post";
 import { notFound } from "next/navigation";
-import { generateBlogStaticParams } from "@/lib/static-params";
-import { POSTS_PER_PAGE } from "@/lib/constants";
-import type { NotionPage } from "@/types/notion";
+import { generateBlogStaticParams } from "@/registry/default/notion-blog/lib/static-params";
+import { POSTS_PER_PAGE } from "@/registry/default/notion-blog/lib/constants";
+import type { NotionPage } from "@/registry/default/notion-blog/types/notion";
 import {
   isBlogRootPage,
   isBlogPostPage,
@@ -19,7 +19,7 @@ import {
   getTagSlug,
   getPageNumber,
   getPostSlug,
-} from "@/lib/page-utils";
+} from "@/registry/default/notion-blog/lib/page-utils";
 
 export { generateBlogStaticParams as generateStaticParams };
 

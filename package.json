@@ -7,7 +7,9 @@
     "build:turbo": "next build --turbo",
     "dev": "next dev --turbo",
     "start": "next start",
-    "serve": "npx serve@latest out"
+    "serve": "npx serve@latest out",
+    "registry:build": "npx shadcn@latest build",
+    "registry:dev": "npx shadcn@latest build --watch"
   },
   "dependencies": {
     "@content-collections/core": "^0.12.0",
