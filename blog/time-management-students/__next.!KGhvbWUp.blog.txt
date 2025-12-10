@@ -1,4 +1,4 @@
 1:"$Sreact.fragment"
 2:I[88692,["/_next/static/chunks/ec39348990c3a291.js","/_next/static/chunks/e612c3809afb78cf.js"],"default"]
 3:I[34672,["/_next/static/chunks/ec39348990c3a291.js","/_next/static/chunks/e612c3809afb78cf.js"],"default"]
-0:{"buildId":"80z4wPUw08JVB4-aR6UN-","rsc":["$","$1","c",{"children":[null,["$","div",null,{"className":"flex flex-1 flex-col divide-y divide-dashed divide-border/70 border-border/70 border-dashed sm:border-b dark:divide-border dark:border-border blog","children":["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]}]]}],"loading":null,"isPartial":false}
+0:{"buildId":"Hje7fX3vL6YL5ihHs7JnC","rsc":["$","$1","c",{"children":[null,["$","div",null,{"className":"flex flex-1 flex-col divide-y divide-dashed divide-border/70 border-border/70 border-dashed sm:border-b dark:divide-border dark:border-border blog","children":["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]}]]}],"loading":null,"isPartial":false}
