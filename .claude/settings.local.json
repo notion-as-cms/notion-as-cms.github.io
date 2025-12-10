@@ -9,7 +9,9 @@
       "Bash(npx shadcn@latest add:*)",
       "Bash(grep:*)",
       "Bash(cat:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(pnpm build:registry:*)",
+      "Bash(pnpm registry:build:*)"
     ]
   }
 }
