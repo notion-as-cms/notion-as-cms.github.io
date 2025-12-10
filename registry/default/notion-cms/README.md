@@ -5,7 +5,7 @@ A flexible content system powered by Notion. Supports multiple content sources (
 ## Installation
 
 ```bash
-npx shadcn@latest add https://your-registry-url.com/r/notion-cms.json
+pnpm dlx shadcn@latest add https://notion-as-cms.github.io/r/notion-cms.json
 ```
 
 This installs:
