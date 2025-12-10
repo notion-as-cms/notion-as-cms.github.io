@@ -56,8 +56,8 @@ jobs:
       - name: Validate Registry Build
         run: |
           echo "Validating registry build..."
-          if [ ! -f "public/r/notion-blog.json" ]; then
-            echo "❌ Error: public/r/notion-blog.json not found"
+          if [ ! -f "public/r/notion-cms.json" ]; then
+            echo "❌ Error: public/r/notion-cms.json not found"
             exit 1
           fi
           if [ ! -f "public/r/registry.json" ]; then

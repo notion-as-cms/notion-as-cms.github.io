@@ -56,26 +56,26 @@ gh-pages/
 ├── index.html              # Main production site
 ├── blog/                   # Production blog
 ├── r/                      # Production registry
-│   └── notion-blog.json
+│   └── notion-cms.json
 ├── _next/                  # Production assets
 └── pr-preview/             # PR preview umbrella folder
     ├── pr-5/               # Preview for PR #5
     │   ├── index.html
     │   ├── blog/
     │   └── r/
-    │       └── notion-blog.json
+    │       └── notion-cms.json
     └── pr-12/              # Preview for PR #12
         ├── index.html
         ├── blog/
         └── r/
-            └── notion-blog.json
+            └── notion-cms.json
 ```
 
 ## 🌐 URLs After Setup
 
 - **Production:** `https://notion-as-cms.github.io/`
 - **PR #5 Preview:** `https://notion-as-cms.github.io/pr-preview/pr-5/`
-- **PR #5 Registry:** `https://notion-as-cms.github.io/pr-preview/pr-5/r/notion-blog.json`
+- **PR #5 Registry:** `https://notion-as-cms.github.io/pr-preview/pr-5/r/notion-cms.json`
 
 ## ✅ Verification
 

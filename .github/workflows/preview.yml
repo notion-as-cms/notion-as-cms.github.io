@@ -104,7 +104,7 @@ jobs:
 
             **Preview URL:** ${previewUrl}
 
-            **Registry URL:** ${previewUrl}r/notion-blog.json
+            **Registry URL:** ${previewUrl}r/notion-cms.json
 
             ---
             The preview will be automatically updated when you push new commits to this PR.
