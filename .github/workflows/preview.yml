@@ -76,6 +76,7 @@ jobs:
           NOTION_BLOG_DATABASE_ID: ${{ secrets.NOTION_BLOG_DATABASE_ID }}
           NOTION_TAG_DATABASE_ID: ${{ secrets.NOTION_TAG_DATABASE_ID }}
           NOTION_AUTHOR_DATABASE_ID: ${{ secrets.NOTION_AUTHOR_DATABASE_ID }}
+          NOTION_UPDATES_DATABASE_ID: ${{ secrets.NOTION_UPDATES_DATABASE_ID }}
         run: pnpm build
 
       - name: Add .nojekyll file
