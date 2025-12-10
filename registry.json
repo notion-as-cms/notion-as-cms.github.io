@@ -9,7 +9,9 @@
       "title": "Notion Content CMS",
       "description": "A flexible content system powered by Notion. Supports multiple content sources (blog, changelog, updates, etc.) with pagination, tag filtering, syntax highlighting, and full-featured content rendering. Built with Next.js App Router and React Server Components.",
       "registryDependencies": [
-        "button"
+        "button",
+        "sheet",
+        "scroll-area"
       ],
       "dependencies": [
         "@notionhq/client@3.1.1",
@@ -49,6 +51,11 @@
           "path": "registry/default/notion-cms/components/renderer.tsx",
           "type": "registry:component",
           "target": "components/notion/renderer.tsx"
+        },
+        {
+          "path": "registry/default/notion-cms/components/table-of-contents.tsx",
+          "type": "registry:component",
+          "target": "components/notion/table-of-contents.tsx"
         },
         {
           "path": "registry/default/notion-cms/lib/config.ts",

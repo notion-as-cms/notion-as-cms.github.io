@@ -1,10 +1,12 @@
 import { Client } from "@notionhq/client";
 import { NotionCompatAPI } from "notion-compat";
+import { getPageTableOfContents } from "notion-utils";
 import {
   PageObjectResponse,
   RichTextItemResponse,
 } from "@notionhq/client/build/src/api-endpoints";
-import type { PageInfo, Tag } from "@/registry/default/notion-cms/types/notion";
+import type { PageInfo, Tag, TOCEntry } from "@/registry/default/notion-cms/types/notion";
+import { findPageBlock } from "./notion-utils";
 
 /**
  * Get a full page with content for rendering.
@@ -43,19 +45,36 @@ export const getPage = async (
     blogTags = allTags.filter((tag) => tagIds.includes(tag.id));
   }
 
+  // Extract table of contents from headings
+  let toc: TOCEntry[] = [];
+  try {
+    const pageBlock = findPageBlock(recordMap);
+    if (pageBlock) {
+      const rawToc = getPageTableOfContents(pageBlock, recordMap);
+      toc = rawToc.map((item) => ({
+        id: item.id,
+        text: item.text,
+        level: item.indentLevel + 1, // Convert 0,1,2 to 1,2,3 for h1,h2,h3
+      }));
+    }
+  } catch (error) {
+    console.error("Error extracting TOC:", error);
+  }
+
   return {
     ...recordMap,
     pageInfo: {
       ...pageInfo,
       tags: blogTags,
       cover: pageInfo.cover,
+      toc,
     },
     raw: {
       ...(recordMap as any).raw,
       page: rawPage,
     },
   } as typeof recordMap & {
-    pageInfo: PageInfo;
+    pageInfo: PageInfo & { toc: TOCEntry[] };
     raw: {
       page: PageObjectResponse;
     };

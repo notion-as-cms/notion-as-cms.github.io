@@ -24,6 +24,13 @@ export interface Tag {
   label: string;
 }
 
+// Table of Contents entry extracted from Notion headings
+export interface TOCEntry {
+  id: string;
+  text: string;
+  level: number; // 1, 2, or 3 for h1, h2, h3
+}
+
 export interface PageInfo {
   id: string;
   title: string;

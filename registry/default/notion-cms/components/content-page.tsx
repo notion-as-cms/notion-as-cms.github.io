@@ -1,12 +1,14 @@
 import { Renderer } from "./renderer";
+import { MobileTOC, DesktopTOC } from "./table-of-contents";
 import Image from "next/image";
 import Link from "next/link";
-import type { Tag } from "@/registry/default/notion-cms/types/notion";
+import type { Tag, TOCEntry } from "@/registry/default/notion-cms/types/notion";
 import type { ExtendedRecordMap } from "notion-types";
 import { Calendar } from "lucide-react";
 
 interface PageInfo {
   date?: string;
+  toc?: TOCEntry[];
   [key: string]: any;
 }
 
@@ -18,17 +20,19 @@ interface ContentPageProps {
 }
 
 export function ContentPage({ recordMap, basePath = "/blog" }: ContentPageProps) {
-  const { tags = [], cover, title, description } = recordMap.pageInfo || {};
+  const { tags = [], cover, title, description, toc = [] } = recordMap.pageInfo || {};
   const safeTags = (tags as Tag[]) || [];
 
   // Get the last edited time from the first block
   const lastEditedTime =
     recordMap.block[Object.keys(recordMap.block)[0]]?.value?.last_edited_time;
 
+  const hasTOC = toc.length > 0;
+
   return (
     <article className="min-h-screen">
       {/* Header Section */}
-      <header className="container max-w-4xl mx-auto px-4 py-8 lg:py-12">
+      <header className="container max-w-5xl mx-auto px-4 py-8 lg:py-12">
         {/* Cover Image */}
         {cover && (
           <div className="relative w-full h-64 md:h-96 mb-8 rounded-lg overflow-hidden">
@@ -38,7 +42,7 @@ export function ContentPage({ recordMap, basePath = "/blog" }: ContentPageProps)
               fill
               className="object-cover"
               priority
-              sizes="(max-width: 768px) 100vw, 896px"
+              sizes="(max-width: 768px) 100vw, 1024px"
             />
           </div>
         )}
@@ -85,28 +89,44 @@ export function ContentPage({ recordMap, basePath = "/blog" }: ContentPageProps)
         )}
       </header>
 
-      {/* Content Section */}
+      {/* Content Section with TOC */}
       <div className="bg-muted/50">
-        <div className="container max-w-4xl mx-auto px-4 py-8 lg:py-12">
-          <div
-            className="prose prose-neutral dark:prose-invert max-w-none
-              prose-headings:font-semibold prose-headings:text-foreground
-              prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
-              prose-p:text-muted-foreground
-              prose-a:text-primary hover:prose-a:text-primary/80
-              prose-strong:text-foreground
-              prose-code:text-sm prose-code:bg-muted prose-code:text-foreground
-              prose-pre:bg-card prose-pre:border prose-pre:border-border
-              prose-img:rounded-lg
-              prose-blockquote:border-l-primary prose-blockquote:text-muted-foreground"
-            style={{ "--notion-max-width": "100%" } as React.CSSProperties}
-          >
-            <Renderer
-              recordMap={recordMap}
-              fullPage={false}
-              darkMode={false}
-              showTableOfContents={false}
-            />
+        <div className="container max-w-5xl mx-auto px-4 py-8 lg:py-12">
+          {/* Mobile TOC - shown at top on mobile */}
+          {hasTOC && <MobileTOC toc={toc} />}
+
+          <div className={hasTOC ? "lg:flex lg:gap-10" : ""}>
+            {/* Desktop TOC - left sidebar */}
+            {hasTOC && (
+              <aside className="hidden lg:block lg:w-56 lg:shrink-0">
+                <DesktopTOC toc={toc} />
+              </aside>
+            )}
+
+            {/* Main Content */}
+            <div className={hasTOC ? "lg:flex-1 lg:min-w-0" : ""}>
+              <div
+                className="prose prose-neutral dark:prose-invert max-w-none
+                  prose-headings:font-semibold prose-headings:text-foreground
+                  prose-headings:scroll-mt-24
+                  prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
+                  prose-p:text-muted-foreground
+                  prose-a:text-primary hover:prose-a:text-primary/80
+                  prose-strong:text-foreground
+                  prose-code:text-sm prose-code:bg-muted prose-code:text-foreground
+                  prose-pre:bg-card prose-pre:border prose-pre:border-border
+                  prose-img:rounded-lg
+                  prose-blockquote:border-l-primary prose-blockquote:text-muted-foreground"
+                style={{ "--notion-max-width": "100%" } as React.CSSProperties}
+              >
+                <Renderer
+                  recordMap={recordMap}
+                  fullPage={false}
+                  darkMode={false}
+                  showTableOfContents={false}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
