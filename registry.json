@@ -93,6 +93,11 @@
           "target": "lib/notion/search.ts"
         },
         {
+          "path": "registry/default/notion-cms/lib/content-page.tsx",
+          "type": "registry:lib",
+          "target": "lib/notion/content-page.tsx"
+        },
+        {
           "path": "registry/default/notion-cms/types/notion.ts",
           "type": "registry:lib",
           "target": "types/notion.ts"
