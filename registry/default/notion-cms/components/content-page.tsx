@@ -1,5 +1,5 @@
 import { Renderer } from "./renderer";
-import { MobileTOC, DesktopTOC } from "./table-of-contents";
+import { MobileTOC, DesktopTOC, type TOCConfig } from "./table-of-contents";
 import Image from "next/image";
 import Link from "next/link";
 import type { Tag, TOCEntry } from "@/registry/default/notion-cms/types/notion";
@@ -17,9 +17,11 @@ interface ContentPageProps {
     pageInfo: PageInfo;
   };
   basePath?: string;
+  /** TOC configuration for header offset and mobile positioning */
+  tocConfig?: TOCConfig;
 }
 
-export function ContentPage({ recordMap, basePath = "/blog" }: ContentPageProps) {
+export function ContentPage({ recordMap, basePath = "/blog", tocConfig }: ContentPageProps) {
   const { tags = [], cover, title, description, toc = [] } = recordMap.pageInfo || {};
   const safeTags = (tags as Tag[]) || [];
 
@@ -93,13 +95,13 @@ export function ContentPage({ recordMap, basePath = "/blog" }: ContentPageProps)
       <div className="bg-muted/50">
         <div className="container max-w-5xl mx-auto px-4 py-8 lg:py-12">
           {/* Mobile TOC - shown at top on mobile */}
-          {hasTOC && <MobileTOC toc={toc} />}
+          {hasTOC && <MobileTOC toc={toc} config={tocConfig} />}
 
           <div className={hasTOC ? "lg:flex lg:gap-10" : ""}>
             {/* Desktop TOC - left sidebar */}
             {hasTOC && (
               <aside className="hidden lg:block lg:w-56 lg:shrink-0">
-                <DesktopTOC toc={toc} />
+                <DesktopTOC toc={toc} config={tocConfig} />
               </aside>
             )}
 

@@ -31,6 +31,14 @@ export interface TOCEntry {
   level: number; // 1, 2, or 3 for h1, h2, h3
 }
 
+// TOC configuration for customizing behavior
+export interface TOCConfig {
+  /** Offset from top for scroll spy calculations (default: 100) */
+  headerOffset?: number;
+  /** Mobile sticky bar top position in Tailwind class (default: "top-16") */
+  mobileTopClass?: string;
+}
+
 export interface PageInfo {
   id: string;
   title: string;
