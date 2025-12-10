@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useLayoutEffect } from "react";
+import { useEffect, useState, useRef, useLayoutEffect, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { List } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,42 +32,159 @@ interface TableOfContentsProps {
 /** Convert hyphenated UUID to non-hyphenated (notion-utils vs react-notion-x format) */
 const toElementId = (id: string) => id.replace(/-/g, "");
 
-/** Hook for scroll spy - tracks which heading is currently active */
-function useActiveAnchor(toc: TOCEntry[], headerOffset: number) {
-  const [activeId, setActiveId] = useState<string | null>(
-    toc.length > 0 ? toc[0].id : null
-  );
+/** Convert element ID back to hyphenated format for TOC matching */
+const toTocId = (elementId: string) => {
+  // Convert 32-char hex to UUID format: 8-4-4-4-12
+  if (elementId.length === 32 && /^[a-f0-9]+$/.test(elementId)) {
+    return `${elementId.slice(0, 8)}-${elementId.slice(8, 12)}-${elementId.slice(12, 16)}-${elementId.slice(16, 20)}-${elementId.slice(20)}`;
+  }
+  return elementId;
+};
 
+/**
+ * Hook for scroll spy with URL sync
+ * - Tracks which heading is currently at the top of viewport
+ * - Syncs with URL hash on load and hash changes
+ * - Updates URL when scrolling
+ */
+function useActiveAnchor(
+  toc: TOCEntry[],
+  headerOffset: number,
+  setActiveIdExternal?: (id: string | null) => void
+) {
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const isScrollingRef = useRef(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Get active ID from URL hash on mount
+  useEffect(() => {
+    if (toc.length === 0) return;
+
+    const hash = window.location.hash.slice(1); // Remove #
+    if (hash) {
+      const tocId = toTocId(hash);
+      const matchingItem = toc.find(
+        (item) => item.id === tocId || toElementId(item.id) === hash
+      );
+      if (matchingItem) {
+        setActiveId(matchingItem.id);
+        return;
+      }
+    }
+    // Default to first item
+    setActiveId(toc[0].id);
+  }, [toc]);
+
+  // Listen for hash changes (e.g., browser back/forward)
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1);
+      if (hash) {
+        const tocId = toTocId(hash);
+        const matchingItem = toc.find(
+          (item) => item.id === tocId || toElementId(item.id) === hash
+        );
+        if (matchingItem) {
+          setActiveId(matchingItem.id);
+        }
+      }
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, [toc]);
+
+  // Scroll spy - update active heading based on scroll position
   useEffect(() => {
     if (toc.length === 0) return;
 
     const ids = toc.map((item) => item.id);
 
     const updateActiveHeading = () => {
-      const scrollTop = window.scrollY + headerOffset;
-      let currentId: string | null = null;
+      // Don't update during programmatic scrolling
+      if (isScrollingRef.current) return;
+
+      // Find the heading that's closest to the header offset line
+      // We want the heading that's just at or slightly above the offset
+      let bestMatch: string | null = null;
+      let bestDistance = Infinity;
 
       for (const id of ids) {
         const element = document.getElementById(toElementId(id));
         if (!element) continue;
 
-        const elementTop = element.getBoundingClientRect().top + window.scrollY;
-        if (elementTop <= scrollTop) {
-          currentId = id;
-        } else {
-          break;
+        const rect = element.getBoundingClientRect();
+        const distanceFromOffset = rect.top - headerOffset;
+
+        // Heading is at or above the offset line
+        if (distanceFromOffset <= 0) {
+          // We want the one closest to 0 (just past the line)
+          const absDistance = Math.abs(distanceFromOffset);
+          if (absDistance < bestDistance) {
+            bestDistance = absDistance;
+            bestMatch = id;
+          }
         }
       }
 
-      setActiveId(currentId || ids[0]);
+      // If no heading is above offset, use the first visible one or first overall
+      if (!bestMatch) {
+        for (const id of ids) {
+          const element = document.getElementById(toElementId(id));
+          if (!element) continue;
+          const rect = element.getBoundingClientRect();
+          if (rect.top >= 0 && rect.top < window.innerHeight) {
+            bestMatch = id;
+            break;
+          }
+        }
+      }
+
+      if (!bestMatch && ids.length > 0) {
+        bestMatch = ids[0];
+      }
+
+      if (bestMatch && bestMatch !== activeId) {
+        setActiveId(bestMatch);
+        // Update URL without triggering scroll
+        const newHash = `#${toElementId(bestMatch)}`;
+        if (window.location.hash !== newHash) {
+          window.history.replaceState(null, "", newHash);
+        }
+      }
     };
 
     updateActiveHeading();
     window.addEventListener("scroll", updateActiveHeading, { passive: true });
     return () => window.removeEventListener("scroll", updateActiveHeading);
-  }, [toc, headerOffset]);
+  }, [toc, headerOffset, activeId]);
 
-  return activeId;
+  // Function to set active ID and mark as scrolling (to prevent scroll spy override)
+  const setActiveWithScroll = useCallback((id: string) => {
+    isScrollingRef.current = true;
+    setActiveId(id);
+
+    // Clear any existing timeout
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+
+    // Re-enable scroll spy after scrolling completes
+    scrollTimeoutRef.current = setTimeout(() => {
+      isScrollingRef.current = false;
+    }, 1000); // Wait for smooth scroll to complete
+  }, []);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  return { activeId, setActiveWithScroll };
 }
 
 /** Individual TOC item with auto-scroll when becoming active */
@@ -82,12 +199,12 @@ function TOCItem({
   isActive: boolean;
   containerRef: React.RefObject<HTMLElement | null>;
   headerOffset: number;
-  onItemClick?: () => void;
+  onItemClick?: (id: string) => void;
 }) {
   const itemRef = useRef<HTMLAnchorElement>(null);
   const wasActiveRef = useRef(false);
 
-  // Auto-scroll TOC container when this item becomes active (point 4)
+  // Auto-scroll TOC container when this item becomes active
   useLayoutEffect(() => {
     if (
       isActive &&
@@ -110,16 +227,25 @@ function TOCItem({
     wasActiveRef.current = isActive;
   }, [isActive, containerRef]);
 
-  // Handle click with scroll offset (point 3)
+  // Handle click - scroll content and update URL
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    const element = document.getElementById(toElementId(item.id));
+
+    const elementId = toElementId(item.id);
+    const element = document.getElementById(elementId);
+
     if (element) {
+      // Update URL first
+      window.history.pushState(null, "", `#${elementId}`);
+
+      // Notify parent to set active (with scroll lock)
+      onItemClick?.(item.id);
+
+      // Scroll to element with offset
       const top =
         element.getBoundingClientRect().top + window.scrollY - headerOffset;
       window.scrollTo({ top, behavior: "smooth" });
     }
-    onItemClick?.();
   };
 
   return (
@@ -132,7 +258,6 @@ function TOCItem({
         item.level === 1 && "pl-0",
         item.level === 2 && "pl-4",
         item.level === 3 && "pl-8 text-xs",
-        // Point 2: underline + semi-bold for active, no left border
         isActive
           ? "text-foreground font-medium underline underline-offset-4"
           : "text-muted-foreground"
@@ -152,7 +277,7 @@ export function DesktopTOC({
   config?: TOCConfig;
 }) {
   const headerOffset = config.headerOffset ?? DEFAULT_HEADER_OFFSET;
-  const activeId = useActiveAnchor(toc, headerOffset);
+  const { activeId, setActiveWithScroll } = useActiveAnchor(toc, headerOffset);
   const containerRef = useRef<HTMLDivElement>(null);
 
   if (toc.length === 0) return null;
@@ -175,6 +300,7 @@ export function DesktopTOC({
               isActive={activeId === item.id}
               containerRef={containerRef}
               headerOffset={headerOffset}
+              onItemClick={setActiveWithScroll}
             />
           ))}
         </nav>
@@ -194,15 +320,19 @@ export function MobileTOC({
   const [open, setOpen] = useState(false);
   const headerOffset = config.headerOffset ?? DEFAULT_HEADER_OFFSET;
   const mobileTopClass = config.mobileTopClass ?? "top-16";
-  const activeId = useActiveAnchor(toc, headerOffset);
+  const { activeId, setActiveWithScroll } = useActiveAnchor(toc, headerOffset);
   const containerRef = useRef<HTMLDivElement>(null);
 
   if (toc.length === 0) return null;
 
   const activeItem = toc.find((item) => item.id === activeId);
 
+  const handleItemClick = (id: string) => {
+    setActiveWithScroll(id);
+    setOpen(false);
+  };
+
   return (
-    // Point 1: configurable top position via mobileTopClass
     <div
       className={cn(
         "lg:hidden sticky z-40 -mx-4 px-4 py-3 mb-6",
@@ -240,7 +370,7 @@ export function MobileTOC({
                     isActive={activeId === item.id}
                     containerRef={containerRef}
                     headerOffset={headerOffset}
-                    onItemClick={() => setOpen(false)}
+                    onItemClick={handleItemClick}
                   />
                 ))}
               </nav>
