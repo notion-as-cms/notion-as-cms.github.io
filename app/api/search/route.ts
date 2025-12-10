@@ -3,7 +3,6 @@ import notionConfig from "@/notion.config";
 import { createNotionClient } from "@/registry/default/notion-cms/lib/notion-client";
 import { createSearchIndexFetcher } from "@/registry/default/notion-cms/lib/search";
 
-// Create client and search index fetcher
 const { client } = createNotionClient(notionConfig.apiKey);
 const getSearchIndexes = createSearchIndexFetcher(client, notionConfig.sources);
 

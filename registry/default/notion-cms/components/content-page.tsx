@@ -1,30 +1,13 @@
 import { Renderer } from "./renderer";
-import { findPageBlock } from "@/registry/default/notion-cms/lib/notion-utils";
-import { getPageTableOfContents } from "notion-utils";
 import Image from "next/image";
 import Link from "next/link";
 import type { Tag } from "@/registry/default/notion-cms/types/notion";
-import {
-  DocsPage,
-  DocsBody,
-  DocsDescription,
-  DocsTitle,
-} from "fumadocs-ui/page";
 import type { ExtendedRecordMap } from "notion-types";
-import { DocsLayout } from "fumadocs-ui/layouts/docs";
-import { cn } from "@/lib/utils";
 import { Calendar } from "lucide-react";
 
-// Update PageInfo type to include date
 interface PageInfo {
   date?: string;
   [key: string]: any;
-}
-
-interface TOCItemType {
-  title: React.ReactNode;
-  url: string;
-  depth: number;
 }
 
 interface ContentPageProps {
@@ -34,132 +17,100 @@ interface ContentPageProps {
   basePath?: string;
 }
 
-type TableOfContents = TOCItemType[];
-
 export function ContentPage({ recordMap, basePath = "/blog" }: ContentPageProps) {
   const { tags = [], cover, title, description } = recordMap.pageInfo || {};
   const safeTags = (tags as Tag[]) || [];
 
-  // Generate TOC from recordMap
-  const toc: TableOfContents = [];
-  try {
-    const pageBlock = findPageBlock(recordMap);
-    if (pageBlock) {
-      const items = getPageTableOfContents(pageBlock, recordMap);
-      items.forEach((item) => {
-        if (item?.id && item?.text) {
-          toc.push({
-            title: item.text,
-            url: `#${item.id}`,
-            depth: item.indentLevel || 0,
-          });
-        }
-      });
-    }
-  } catch (error) {
-    console.error("Error generating TOC:", error);
-  }
+  // Get the last edited time from the first block
+  const lastEditedTime =
+    recordMap.block[Object.keys(recordMap.block)[0]]?.value?.last_edited_time;
 
   return (
-    <>
-      <div className="relative container px-4 py-8 lg:py-12 lg:px-6 text-left">
+    <article className="min-h-screen">
+      {/* Header Section */}
+      <header className="container max-w-4xl mx-auto px-4 py-8 lg:py-12">
         {/* Cover Image */}
         {cover && (
           <div className="relative w-full h-64 md:h-96 mb-8 rounded-lg overflow-hidden">
             <Image
               src={cover}
-              alt="Post cover"
+              alt="Cover image"
               fill
               className="object-cover"
               priority
-              sizes="(max-width: 768px) 100vw, 75vw"
+              sizes="(max-width: 768px) 100vw, 896px"
             />
           </div>
         )}
 
-        <div className="mb-4 text-gray-600 dark:text-gray-400 text-sm font-medium">
-          <div className="flex flex-wrap gap-3">
+        {/* Date */}
+        {lastEditedTime && (
+          <div className="mb-4 text-muted-foreground text-sm font-medium">
             <span className="inline-flex items-center gap-1.5">
               <Calendar className="h-4 w-4" />
-              {new Date(
-                recordMap.block[Object.keys(recordMap.block)[0]]?.value
-                  ?.last_edited_time || ""
-              ).toLocaleDateString("en-US", {
+              {new Date(lastEditedTime).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "long",
                 day: "numeric",
               })}
             </span>
           </div>
-        </div>
-
-        <DocsTitle className="text-left dark:text-white">
-          {title || "Untitled"}
-        </DocsTitle>
-
-        {description && (
-          <DocsDescription className="text-left mt-3 dark:text-gray-300">
-            {description}
-          </DocsDescription>
         )}
 
+        {/* Title */}
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground">
+          {title || "Untitled"}
+        </h1>
+
+        {/* Description */}
+        {description && (
+          <p className="mt-4 text-lg text-muted-foreground">
+            {description}
+          </p>
+        )}
+
+        {/* Tags */}
         {safeTags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-4">
+          <div className="flex flex-wrap gap-2 mt-6">
             {safeTags.map((tag) => (
               <Link
                 key={tag.id}
                 href={`${basePath}/tag/${tag.value}`}
-                className="px-2.5 py-0.5 bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-300 rounded-full text-xs font-medium"
+                className="px-3 py-1 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-full text-sm font-medium transition-colors"
               >
                 {tag.label}
               </Link>
             ))}
           </div>
         )}
-      </div>
+      </header>
 
-      <DocsLayout
-        nav={{ enabled: false }}
-        tree={{
-          name: "Blog",
-          children: [],
-        }}
-        sidebar={{ enabled: false, prefetch: false, tabs: false }}
-      >
-        <DocsPage
-          // toc={toc}
-          full={false}
-          footer={{ enabled: false }}
-          tableOfContent={{
-            // style: "clerk",
-            single: false,
-          }}
-          container={{
-            className: cn(
-              "bg-zinc-50/50 dark:bg-zinc-900/50 !container px-4 lg:px-6"
-            ),
-          }}
-        >
-          <DocsBody>
-            <div
-              className="prose dark:prose-invert max-w-none"
-              style={
-                {
-                  "--notion-max-width": "100%",
-                } as React.CSSProperties
-              }
-            >
-              <Renderer
-                recordMap={recordMap}
-                fullPage={false}
-                darkMode={false}
-                showTableOfContents={false}
-              />
-            </div>
-          </DocsBody>
-        </DocsPage>
-      </DocsLayout>
-    </>
+      {/* Content Section */}
+      <div className="bg-muted/50">
+        <div className="container max-w-4xl mx-auto px-4 py-8 lg:py-12">
+          <div
+            className="prose prose-neutral dark:prose-invert max-w-none
+              prose-headings:font-semibold prose-headings:text-foreground
+              prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
+              prose-p:text-muted-foreground
+              prose-a:text-primary hover:prose-a:text-primary/80
+              prose-strong:text-foreground
+              prose-code:text-sm prose-code:bg-muted prose-code:text-foreground
+              prose-pre:bg-card prose-pre:border prose-pre:border-border
+              prose-img:rounded-lg
+              prose-blockquote:border-l-primary prose-blockquote:text-muted-foreground"
+            style={{ "--notion-max-width": "100%" } as React.CSSProperties}
+          >
+            <Renderer
+              recordMap={recordMap}
+              fullPage={false}
+              darkMode={false}
+              showTableOfContents={false}
+            />
+          </div>
+        </div>
+      </div>
+    </article>
   );
 }
 

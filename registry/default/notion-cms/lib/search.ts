@@ -1,10 +1,44 @@
 import { Client } from "@notionhq/client";
-import type { AdvancedIndex } from "fumadocs-core/search/server";
 import { getPublishedPosts } from "./notion";
 import type { NotionSourceConfig } from "@/registry/default/notion-cms/types/notion";
 
+/**
+ * Content section structure for search index
+ */
+export interface SearchContent {
+  heading: string;
+  content: string;
+}
+
+/**
+ * Heading structure for search index
+ */
+export interface SearchHeading {
+  id: string;
+  content: string;
+}
+
+/**
+ * Search index structure compatible with fumadocs-core/search/server AdvancedIndex
+ * Define our own type to avoid fumadocs dependency in the registry
+ */
+export interface SearchIndex {
+  id: string;
+  title: string;
+  description?: string;
+  keywords?: string;
+  tag?: string;
+  url: string;
+  structuredData: {
+    headline: string;
+    description: string;
+    contents: SearchContent[];
+    headings: SearchHeading[];
+  };
+}
+
 export interface SearchIndexCache {
-  indexes: AdvancedIndex[];
+  indexes: SearchIndex[];
   lastFetchTime: number;
 }
 
@@ -15,11 +49,11 @@ export interface SearchIndexCache {
 export async function buildSearchIndexes(
   client: Client,
   source: NotionSourceConfig
-): Promise<AdvancedIndex[]> {
+): Promise<SearchIndex[]> {
   const response = await getPublishedPosts(client, source.databaseId);
   const posts = Array.isArray(response) ? response : response?.results || [];
 
-  return posts.map((post) => ({
+  return posts.map((post: any) => ({
     id: post.id,
     title: post.properties.Name?.title?.[0]?.plain_text || "Untitled",
     description:
@@ -33,8 +67,8 @@ export async function buildSearchIndexes(
       headline: post.properties.Name?.title?.[0]?.plain_text || "Untitled",
       description:
         post.properties.Description?.rich_text?.[0]?.plain_text || "",
-      contents: [],
-      headings: [],
+      contents: [] as SearchContent[],
+      headings: [] as SearchHeading[],
     },
   }));
 }
@@ -46,8 +80,8 @@ export async function buildSearchIndexes(
 export async function buildMultiSourceSearchIndexes(
   client: Client,
   sources: Record<string, NotionSourceConfig>
-): Promise<AdvancedIndex[]> {
-  const allIndexes: AdvancedIndex[] = [];
+): Promise<SearchIndex[]> {
+  const allIndexes: SearchIndex[] = [];
 
   for (const [name, source] of Object.entries(sources)) {
     try {
@@ -76,7 +110,7 @@ export function createSearchIndexFetcher(
     lastFetchTime: 0,
   };
 
-  return async function getSearchIndexes(): Promise<AdvancedIndex[]> {
+  return async function getSearchIndexes(): Promise<SearchIndex[]> {
     const now = Date.now();
 
     // Check if cache is still valid
