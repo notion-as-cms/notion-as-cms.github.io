@@ -1,37 +1,55 @@
+import { Client } from "@notionhq/client";
 import { getPublishedPosts, getTags } from "./notion";
 import { isNotionPage } from "./notion-mappers";
+import { getPostsPerPage } from "./config";
+import type { NotionSourceConfig, Tag } from "@/registry/default/notion-cms/types/notion";
 
 type StaticParam = { slug: string[] };
-const POSTS_PER_PAGE = 3;
 
-export async function generateBlogStaticParams() {
+/**
+ * Generate static params for a Notion content source.
+ * This enables static generation for all routes at build time.
+ */
+export async function generateStaticParams(
+  client: Client,
+  source: NotionSourceConfig
+): Promise<StaticParam[]> {
   const allParams: StaticParam[] = [];
+  const postsPerPage = getPostsPerPage(source);
 
   // Add root route (slug: [])
   allParams.push({ slug: [] });
 
   // 1. Get all published posts
-  const { results: posts } = await getPublishedPosts();
+  const { results: posts } = await getPublishedPosts(client, source.databaseId);
 
-  // 2. Generate root blog paths (/page/2, etc.)
-  const rootParams = generateRootPathParams(posts.length);
+  // 2. Generate root pagination paths (/page/2, etc.)
+  const rootParams = generateRootPathParams(posts.length, postsPerPage);
   allParams.push(...rootParams);
 
   // 3. Generate individual post paths (/{slug})
   const postParams = generatePostPathParams(posts);
   allParams.push(...postParams);
 
-  // 4. Generate tag paths (/tag/{tag-slug}, /tag/{tag-slug}/page/2)
-  const tagParams = await generateTagPathParams();
-  allParams.push(...tagParams);
-
-  console.log("allParams", allParams);
+  // 4. Generate tag paths if tag database is configured
+  if (source.tagDatabaseId) {
+    const tagParams = await generateTagPathParams(
+      client,
+      source.tagDatabaseId,
+      posts,
+      postsPerPage
+    );
+    allParams.push(...tagParams);
+  }
 
   return allParams;
 }
 
-function generateRootPathParams(totalPosts: number): StaticParam[] {
-  const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
+function generateRootPathParams(
+  totalPosts: number,
+  postsPerPage: number
+): StaticParam[] {
+  const totalPages = Math.ceil(totalPosts / postsPerPage);
   const params: StaticParam[] = [];
 
   // Skip page 1 as it's handled by the root route
@@ -58,13 +76,13 @@ function generatePostPathParams(posts: any[]): StaticParam[] {
     }));
 }
 
-async function generateTagPathParams(): Promise<StaticParam[]> {
-  const [tags, { results: posts }] = await Promise.all([
-    getTags(),
-    getPublishedPosts(),
-  ]);
-
-  console.log("tags", tags);
+async function generateTagPathParams(
+  client: Client,
+  tagDatabaseId: string,
+  posts: any[],
+  postsPerPage: number
+): Promise<StaticParam[]> {
+  const tags = await getTags(client, tagDatabaseId);
 
   const allParams: StaticParam[] = [];
   const tagPostCounts = new Map<string, number>();
@@ -75,7 +93,6 @@ async function generateTagPathParams(): Promise<StaticParam[]> {
       const tagsProperty = post.properties.Tags;
       if (tagsProperty) {
         const tagIds = tagsProperty.relation?.map((r) => r.id) || [];
-        console.log(`Post ${post.id} has tags:`, tagIds);
         tagIds.forEach((tagId: string) => {
           tagPostCounts.set(tagId, (tagPostCounts.get(tagId) || 0) + 1);
         });
@@ -83,25 +100,17 @@ async function generateTagPathParams(): Promise<StaticParam[]> {
     }
   }
 
-  // Debug: Log the post count for each tag
-  console.log("Tag post counts:");
-  tags.forEach((tag) => {
-    console.log(
-      `- ${tag.label} (${tag.id}): ${tagPostCounts.get(tag.id) || 0} posts`
-    );
-  });
-
   // Generate paths for each tag
   for (const tag of tags) {
     const postCount = tagPostCounts.get(tag.id) || 0;
 
     if (postCount === 0) continue;
 
-    // Add tag page (/blog/tag/{tag-slug})
+    // Add tag page (/tag/{tag-slug})
     allParams.push({ slug: ["tag", tag.value] });
 
-    // Add pagination pages if needed (/blog/tag/{tag-slug}/page/2, etc.)
-    const totalPages = Math.ceil(postCount / POSTS_PER_PAGE);
+    // Add pagination pages if needed (/tag/{tag-slug}/page/2, etc.)
+    const totalPages = Math.ceil(postCount / postsPerPage);
     for (let i = 1; i < totalPages; i++) {
       allParams.push({
         slug: ["tag", tag.value, "page", (i + 1).toString()],

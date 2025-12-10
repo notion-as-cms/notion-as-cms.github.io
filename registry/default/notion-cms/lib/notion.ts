@@ -1,22 +1,23 @@
-// lib/notion.ts
 import { Client } from "@notionhq/client";
 import { NotionCompatAPI } from "notion-compat";
 import {
   PageObjectResponse,
   RichTextItemResponse,
 } from "@notionhq/client/build/src/api-endpoints";
-import type { PageInfo, Tag } from "@/registry/default/notion-blog/types/notion";
+import type { PageInfo, Tag } from "@/registry/default/notion-cms/types/notion";
 
-export const notion = new Client({ auth: process.env.NOTION_API_KEY });
-
-export const notionCustom = new NotionCompatAPI(notion);
-
-export const getPage = async (pageId: string, allTags?: Tag[]) => {
-  const recordMap = await notionCustom.getPage(pageId);
+/**
+ * Get a full page with content for rendering.
+ * Uses NotionCompatAPI to get the ExtendedRecordMap format needed by react-notion-x.
+ */
+export const getPage = async (
+  compatClient: NotionCompatAPI,
+  pageId: string,
+  allTags?: Tag[]
+) => {
+  const recordMap = await compatClient.getPage(pageId);
   const rawPage = (recordMap as any).raw?.page;
   const properties = rawPage?.properties || {};
-
-  console.log("rawPage", rawPage);
 
   // Extract common page properties
   const pageInfo: PageInfo = {
@@ -46,8 +47,8 @@ export const getPage = async (pageId: string, allTags?: Tag[]) => {
     ...recordMap,
     pageInfo: {
       ...pageInfo,
-      tags: blogTags, // Include tags in the page info
-      cover: pageInfo.cover, // Include cover URL
+      tags: blogTags,
+      cover: pageInfo.cover,
     },
     raw: {
       ...(recordMap as any).raw,
@@ -61,9 +62,15 @@ export const getPage = async (pageId: string, allTags?: Tag[]) => {
   };
 };
 
-export async function getTags(): Promise<Tag[]> {
-  const response = await notion.databases.query({
-    database_id: process.env.NOTION_TAG_DATABASE_ID!,
+/**
+ * Get all tags from a tags database.
+ */
+export async function getTags(
+  client: Client,
+  tagDatabaseId: string
+): Promise<Tag[]> {
+  const response = await client.databases.query({
+    database_id: tagDatabaseId,
   });
 
   return response.results.map((page: any) => ({
@@ -73,9 +80,13 @@ export async function getTags(): Promise<Tag[]> {
   }));
 }
 
-export async function getPublishedPosts() {
-  return notion.databases.query({
-    database_id: process.env.NOTION_BLOG_DATABASE_ID!,
+/**
+ * Get all published posts from a database.
+ * Filters by Published status = "Done".
+ */
+export async function getPublishedPosts(client: Client, databaseId: string) {
+  return client.databases.query({
+    database_id: databaseId,
     filter: {
       property: "Published",
       status: { equals: "Done" },
@@ -83,9 +94,16 @@ export async function getPublishedPosts() {
   });
 }
 
-export async function getPageBySlug(slug: string) {
-  const response = await notion.databases.query({
-    database_id: process.env.NOTION_BLOG_DATABASE_ID!,
+/**
+ * Get a page by its slug from a database.
+ */
+export async function getPageBySlug(
+  client: Client,
+  databaseId: string,
+  slug: string
+) {
+  const response = await client.databases.query({
+    database_id: databaseId,
     filter: {
       property: "Slug",
       rich_text: { equals: slug },
@@ -94,10 +112,12 @@ export async function getPageBySlug(slug: string) {
   return response.results[0];
 }
 
+/**
+ * Extract page info from a PageObjectResponse.
+ */
 export function getPageInfo(page: PageObjectResponse): PageInfo {
   const properties = page.properties;
 
-  // Helper to get icon URL
   const getIconUrl = () => {
     if (!page.icon) return null;
 
@@ -128,11 +148,14 @@ export function getPageInfo(page: PageObjectResponse): PageInfo {
     cover:
       page.cover?.type === "external"
         ? page.cover.external.url
-        : (page.cover as any)?.file?.url, // Type assertion as cover type is complex
+        : (page.cover as any)?.file?.url,
     icon: getIconUrl(),
   };
 }
 
+/**
+ * Extract plain text from rich text array.
+ */
 export function getPlainText(rich: RichTextItemResponse[]): string {
   return rich.map((v) => v.plain_text).join();
 }

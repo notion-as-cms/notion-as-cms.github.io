@@ -1,36 +1,39 @@
-import { PostList } from "./post-list";
-import { mapNotionPostToBlogPost } from "@/registry/default/notion-blog/lib/notion-mappers";
-import type { BlogPost, BlogListProps } from "@/registry/default/notion-blog/types/notion";
-import { POSTS_PER_PAGE } from "@/registry/default/notion-blog/lib/constants";
+import { ItemList } from "./item-list";
+import { mapNotionPostToBlogPost } from "@/registry/default/notion-cms/lib/notion-mappers";
+import type { ContentItem, ContentListProps } from "@/registry/default/notion-cms/types/notion";
+import { DEFAULT_POSTS_PER_PAGE } from "@/registry/default/notion-cms/lib/config";
 
-export function BlogList({
+export function ContentList({
   posts,
   tags,
   pageParams,
   isPaginated = false,
   heading = "Latest Posts",
   basePath = "/blog",
-}: BlogListProps) {
+  configuration,
+}: ContentListProps) {
   const currentPage = isPaginated ? getPageNumber(pageParams) : 1;
+  const postsPerPage = configuration?.pageSize ?? DEFAULT_POSTS_PER_PAGE;
 
   // Map all posts, filtering out any null or invalid posts
+  // Pass basePath to mapper so URLs are generated correctly
   const allBlogPosts = posts
-    .map((post) => mapNotionPostToBlogPost(post, tags))
-    .filter((post): post is BlogPost => post !== null);
+    .map((post) => mapNotionPostToBlogPost(post, tags, basePath))
+    .filter((post): post is ContentItem => post !== null);
 
   // Calculate total pages based on all valid posts
-  const totalPages = Math.ceil(allBlogPosts.length / POSTS_PER_PAGE);
+  const totalPages = Math.ceil(allBlogPosts.length / postsPerPage);
 
   // Apply pagination if enabled, otherwise show all posts
   const displayedPosts = isPaginated
     ? allBlogPosts.slice(
-        (currentPage - 1) * POSTS_PER_PAGE,
-        currentPage * POSTS_PER_PAGE
+        (currentPage - 1) * postsPerPage,
+        currentPage * postsPerPage
       )
     : allBlogPosts;
 
   return (
-    <PostList
+    <ItemList
       posts={displayedPosts}
       currentPage={currentPage}
       totalPages={totalPages}
@@ -40,6 +43,9 @@ export function BlogList({
     />
   );
 }
+
+// Alias for backward compatibility
+export { ContentList as BlogList };
 
 // Helper function to get page number from params
 function getPageNumber(pageParams: { slug?: string[] }): number {

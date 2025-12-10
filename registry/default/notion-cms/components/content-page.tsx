@@ -1,9 +1,9 @@
 import { Renderer } from "./renderer";
-import { findPageBlock } from "@/registry/default/notion-blog/lib/notion-utils";
+import { findPageBlock } from "@/registry/default/notion-cms/lib/notion-utils";
 import { getPageTableOfContents } from "notion-utils";
 import Image from "next/image";
 import Link from "next/link";
-import type { Tag } from "@/registry/default/notion-blog/types/notion";
+import type { Tag } from "@/registry/default/notion-cms/types/notion";
 import {
   DocsPage,
   DocsBody,
@@ -27,15 +27,16 @@ interface TOCItemType {
   depth: number;
 }
 
-interface BlogPostProps {
+interface ContentPageProps {
   recordMap: ExtendedRecordMap & {
     pageInfo: PageInfo;
   };
+  basePath?: string;
 }
 
 type TableOfContents = TOCItemType[];
 
-export function BlogPost({ recordMap }: BlogPostProps) {
+export function ContentPage({ recordMap, basePath = "/blog" }: ContentPageProps) {
   const { tags = [], cover, title, description } = recordMap.pageInfo || {};
   const safeTags = (tags as Tag[]) || [];
 
@@ -107,7 +108,7 @@ export function BlogPost({ recordMap }: BlogPostProps) {
             {safeTags.map((tag) => (
               <Link
                 key={tag.id}
-                href={`/blog/tag/${tag.value}`}
+                href={`${basePath}/tag/${tag.value}`}
                 className="px-2.5 py-0.5 bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-300 rounded-full text-xs font-medium"
               >
                 {tag.label}
@@ -161,3 +162,6 @@ export function BlogPost({ recordMap }: BlogPostProps) {
     </>
   );
 }
+
+// Alias for backward compatibility
+export { ContentPage as BlogPost };

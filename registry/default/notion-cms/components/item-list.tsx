@@ -1,18 +1,18 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Pagination } from "./pagination";
-import type { BlogPost, PostListProps } from "@/registry/default/notion-blog/types/notion";
+import type { ContentItem, ItemListProps } from "@/registry/default/notion-cms/types/notion";
 
-export function PostList({
+export function ItemList({
   posts,
   currentPage,
   totalPages,
-  heading = "Blog Posts",
-  description = "Discover the latest insights and tutorials about modern web development, UI design, and component-driven architecture.",
+  heading = "Latest",
+  description,
   basePath = "/blog",
   disablePagination = false,
   configuration = {},
-}: PostListProps) {
+}: ItemListProps) {
   return (
     <div className="container mx-auto px-4 py-8 lg:py-12">
       <section className="mb-12 text-center">
@@ -25,9 +25,9 @@ export function PostList({
       </section>
 
       <section className="space-y-12">
-        {posts.map((post) => (
-          post ? <PostCard key={post.id} post={post} /> : null
-        ))}
+        {posts.map((post) =>
+          post ? <ItemCard key={post.id} item={post} /> : null
+        )}
       </section>
 
       {!disablePagination && totalPages > 1 && (
@@ -43,9 +43,12 @@ export function PostList({
   );
 }
 
-function PostCard({ post }: { post: BlogPost }) {
-  const { title, description, author, date, tags = [] } = post.data;
-  
+// Alias for backward compatibility
+export { ItemList as PostList };
+
+function ItemCard({ item }: { item: ContentItem }) {
+  const { title, description, author, date, tags = [] } = item.data;
+
   return (
     <article className="group">
       <div className="grid gap-y-6 sm:grid-cols-10 sm:gap-x-5 sm:gap-y-0 md:items-center md:gap-x-8 lg:gap-x-12">
@@ -58,7 +61,7 @@ function PostCard({ post }: { post: BlogPost }) {
             </div>
           </div>
           <h3 className="text-xl font-semibold md:text-2xl lg:text-3xl text-left">
-            <Link href={post.url} className="hover:underline cursor-pointer">
+            <Link href={item.url} className="hover:underline cursor-pointer">
               {title}
             </Link>
           </h3>
@@ -76,7 +79,7 @@ function PostCard({ post }: { post: BlogPost }) {
           </div>
           <div className="mt-6 flex items-center space-x-2 md:mt-8">
             <Link
-              href={post.url}
+              href={item.url}
               className="inline-flex items-center font-semibold hover:underline md:text-base"
             >
               <span>Read more</span>
@@ -85,7 +88,7 @@ function PostCard({ post }: { post: BlogPost }) {
           </div>
         </div>
         <div className="order-first sm:order-last sm:col-span-5">
-          <Link href={post.url} className="block">
+          <Link href={item.url} className="block">
             <div className="aspect-[16/9] overflow-clip rounded-lg border border-border">
               <img
                 src={`https://picsum.photos/400/225?grayscale&title=${title}`}
@@ -99,5 +102,3 @@ function PostCard({ post }: { post: BlogPost }) {
     </article>
   );
 }
-
-// Pagination component is now imported from ./pagination

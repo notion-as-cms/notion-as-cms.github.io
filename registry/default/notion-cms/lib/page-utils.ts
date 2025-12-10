@@ -5,11 +5,14 @@
 type PageParams = { slug?: string[] };
 
 /**
- * Checks if the current route is the blog root page
+ * Checks if the current route is the root page (no slug)
  */
-export function isBlogRootPage(params: PageParams): boolean {
+export function isRootPage(params: PageParams): boolean {
   return !params.slug || params.slug.length === 0;
 }
+
+// Alias for backward compatibility
+export { isRootPage as isBlogRootPage };
 
 /**
  * Checks if the current route is a tag page
@@ -38,16 +41,19 @@ export function isPaginatedTagPage(params: PageParams): boolean {
 }
 
 /**
- * Checks if the current route is a blog post page
+ * Checks if the current route is an individual content page (single slug)
  */
-export function isBlogPostPage(params: PageParams): boolean {
+export function isContentPage(params: PageParams): boolean {
   return !!params.slug && params.slug.length === 1 && !!params.slug[0];
 }
 
+// Alias for backward compatibility
+export { isContentPage as isBlogPostPage };
+
 /**
- * Checks if the current route is a paginated blog list
+ * Checks if the current route is a paginated list
  */
-export function isPaginatedBlogPage(params: PageParams): boolean {
+export function isPaginatedPage(params: PageParams): boolean {
   return (
     !!params.slug &&
     params.slug.length === 2 &&
@@ -55,6 +61,9 @@ export function isPaginatedBlogPage(params: PageParams): boolean {
     !isNaN(Number(params.slug[1]))
   );
 }
+
+// Alias for backward compatibility
+export { isPaginatedPage as isPaginatedBlogPage };
 
 /**
  * Gets the tag slug from params if it's a tag page
@@ -70,7 +79,7 @@ export function getTagSlug(params: PageParams): string | null {
  * Gets the page number from params if it's a paginated page
  */
 export function getPageNumber(params: PageParams): number {
-  if (isPaginatedBlogPage(params)) {
+  if (isPaginatedPage(params)) {
     return Number(params.slug?.[1]) || 1;
   }
   if (isPaginatedTagPage(params)) {
@@ -80,11 +89,14 @@ export function getPageNumber(params: PageParams): number {
 }
 
 /**
- * Gets the post slug from params if it's a blog post page
+ * Gets the content slug from params if it's a content page
  */
-export function getPostSlug(params: PageParams): string | null {
-  if (isBlogPostPage(params)) {
+export function getContentSlug(params: PageParams): string | null {
+  if (isContentPage(params)) {
     return params.slug?.[0] || null;
   }
   return null;
 }
+
+// Alias for backward compatibility
+export { getContentSlug as getPostSlug };

@@ -21,8 +21,8 @@ import {
   getPostSlug,
 } from "@/registry/default/notion-cms/lib/page-utils";
 
-// Get the blog source configuration
-const source = notionConfig.sources.blog;
+// Get the updates source configuration
+const source = notionConfig.sources.updates;
 const { client, compatClient } = createNotionClient(notionConfig.apiKey);
 
 // Generate static params for this source
@@ -51,16 +51,16 @@ export default async function Page(props: {
 
   const postsPerPage = getPostsPerPage(source);
 
-  // Handle blog post page
+  // Handle individual page
   if (isBlogPostPage(pageParams)) {
     const postSlug = getPostSlug(pageParams);
     if (!postSlug) {
-      return <div className="max-w-3xl mx-auto p-4">Invalid post URL</div>;
+      return <div className="max-w-3xl mx-auto p-4">Invalid URL</div>;
     }
 
     const post = await getPageBySlug(client, source.databaseId, postSlug);
     if (!post) {
-      return <div className="max-w-3xl mx-auto p-4">Post not found</div>;
+      return <div className="max-w-3xl mx-auto p-4">Update not found</div>;
     }
     const recordMap = await getPage(compatClient, post.id, tags);
     return <ContentPage recordMap={recordMap} basePath={source.basePath} />;
@@ -89,14 +89,14 @@ export default async function Page(props: {
         tags={tags}
         pageParams={pageParams}
         isPaginated={true}
-        heading={`Posts tagged with: ${tag.label}`}
+        heading={`Updates tagged with: ${tag.label}`}
         basePath={`${source.basePath}/tag/${tag.value}`}
         configuration={{ pageSize: postsPerPage }}
       />
     );
   }
 
-  // Handle blog root and paginated blog pages
+  // Handle root and paginated pages
   if (isBlogRootPage(pageParams) || isPaginatedBlogPage(pageParams)) {
     return (
       <ContentList
@@ -104,7 +104,7 @@ export default async function Page(props: {
         tags={tags}
         pageParams={pageParams}
         isPaginated={true}
-        heading="Latest Posts"
+        heading="Updates"
         basePath={source.basePath}
         configuration={{ pageSize: postsPerPage }}
       />
