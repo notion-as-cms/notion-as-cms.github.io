@@ -7,7 +7,6 @@ on:
       - reopened
       - synchronize
       - closed
-      - labeled  # Re-run when label is added (e.g., fetch-fresh-notion)
 
 concurrency: preview-${{ github.ref }}
 
@@ -59,33 +58,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-      - name: Check for fetch-fresh-notion label
-        if: github.event.action != 'closed'
-        id: check-label
-        run: |
-          LABELS=$(gh pr view ${{ github.event.number }} --json labels --jq '.labels[].name')
-          if echo "$LABELS" | grep -q "fetch-fresh-notion"; then
-            echo "fetch-fresh=true" >> $GITHUB_OUTPUT
-            echo "🔄 Label 'fetch-fresh-notion' detected - will fetch fresh Notion content"
-          else
-            echo "fetch-fresh=false" >> $GITHUB_OUTPUT
-            echo "⚡ Using cached Notion data for faster preview builds"
-          fi
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Restore Next.js cache
-        if: github.event.action != 'closed' && steps.check-label.outputs.fetch-fresh != 'true'
-        uses: actions/cache@v4
-        with:
-          path: |
-            .next/cache
-          # This cache includes Notion data fetched during build.
-          # To fetch fresh Notion content, add 'fetch-fresh-notion' label to PR.
-          key: ${{ runner.os }}-nextjs-preview-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-preview-${{ hashFiles('**/pnpm-lock.yaml') }}-
-
       - name: Install dependencies
         if: github.event.action != 'closed'
         run: pnpm install
@@ -133,10 +105,6 @@ jobs:
             **Preview URL:** ${previewUrl}
 
             **Registry URL:** ${previewUrl}r/notion-blog.json
-
-            ### 📦 Build Cache
-            - By default, uses cached Notion content for faster builds
-            - To fetch fresh Notion content, add the \`fetch-fresh-notion\` label to this PR
 
             ---
             The preview will be automatically updated when you push new commits to this PR.

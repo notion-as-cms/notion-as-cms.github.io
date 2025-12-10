@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "build": "next build",
-    "build:turbo": "next build --turbo",
+    "clean": "rm -rf .next .content-collections out",
+    "build": "pnpm clean && next build",
+    "build:turbo": "pnpm clean && next build --turbo",
     "dev": "next dev --turbo",
     "start": "next start",
     "serve": "npx serve@latest out",
