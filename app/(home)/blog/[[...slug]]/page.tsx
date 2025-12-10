@@ -12,6 +12,9 @@ const { generateStaticParams, Page } = createContentSource({
   listHeading: "Latest Posts",
   tagHeadingPrefix: "Posts tagged with:",
   contentLabel: "Post",
+  tocConfig: {
+    mobileTopClass: "top-14",
+  },
 });
 
 export { generateStaticParams };

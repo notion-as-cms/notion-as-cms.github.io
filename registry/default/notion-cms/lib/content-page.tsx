@@ -1,6 +1,6 @@
 import type { Client } from "@notionhq/client";
 import type { NotionCompatAPI } from "notion-compat";
-import type { NotionPage, NotionSourceConfig, Tag } from "@/registry/default/notion-cms/types/notion";
+import type { NotionPage, NotionSourceConfig, Tag, TOCConfig } from "@/registry/default/notion-cms/types/notion";
 import { getPage, getPageBySlug, getPublishedPosts, getTags } from "@/registry/default/notion-cms/lib/notion";
 import { generateStaticParams } from "@/registry/default/notion-cms/lib/static-params";
 import { getPostsPerPage } from "@/registry/default/notion-cms/lib/config";
@@ -26,6 +26,8 @@ export interface ContentPageOptions {
   tagHeadingPrefix?: string;
   /** Label for content items (default: "Post") */
   contentLabel?: string;
+  /** TOC configuration for header offset and mobile positioning */
+  tocConfig?: TOCConfig;
 }
 
 /**
@@ -40,6 +42,7 @@ export function createContentSource(options: ContentPageOptions) {
     listHeading = "Latest",
     tagHeadingPrefix = "Tagged with:",
     contentLabel = "Post",
+    tocConfig,
   } = options;
 
   // Generate static params for this source
@@ -77,7 +80,7 @@ export function createContentSource(options: ContentPageOptions) {
         return <div className="max-w-3xl mx-auto p-4">{contentLabel} not found</div>;
       }
       const recordMap = await getPage(compatClient, post.id, tags);
-      return <ContentPage recordMap={recordMap} basePath={source.basePath} />;
+      return <ContentPage recordMap={recordMap} basePath={source.basePath} tocConfig={tocConfig} />;
     }
 
     // Handle tag pages

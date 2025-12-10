@@ -12,7 +12,10 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import type { TOCEntry, TOCConfig } from "@/registry/default/notion-cms/types/notion";
+import type {
+  TOCEntry,
+  TOCConfig,
+} from "@/registry/default/notion-cms/types/notion";
 
 // Re-export for convenience
 export type { TOCConfig };
@@ -86,13 +89,21 @@ function TOCItem({
 
   // Auto-scroll TOC container when this item becomes active (point 4)
   useLayoutEffect(() => {
-    if (isActive && !wasActiveRef.current && itemRef.current && containerRef.current) {
+    if (
+      isActive &&
+      !wasActiveRef.current &&
+      itemRef.current &&
+      containerRef.current
+    ) {
       const container = containerRef.current;
       const itemEl = itemRef.current;
       const containerRect = container.getBoundingClientRect();
       const itemRect = itemEl.getBoundingClientRect();
 
-      if (itemRect.top < containerRect.top || itemRect.bottom > containerRect.bottom) {
+      if (
+        itemRect.top < containerRect.top ||
+        itemRect.bottom > containerRect.bottom
+      ) {
         itemEl.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }
@@ -104,7 +115,8 @@ function TOCItem({
     e.preventDefault();
     const element = document.getElementById(toElementId(item.id));
     if (element) {
-      const top = element.getBoundingClientRect().top + window.scrollY - headerOffset;
+      const top =
+        element.getBoundingClientRect().top + window.scrollY - headerOffset;
       window.scrollTo({ top, behavior: "smooth" });
     }
     onItemClick?.();
@@ -206,7 +218,9 @@ export function MobileTOC({
             className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground"
           >
             <List className="h-4 w-4 shrink-0" />
-            <span className="truncate">{activeItem?.text || "On this page"}</span>
+            <span className="truncate">
+              {activeItem?.text || "On this page"}
+            </span>
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="w-80 sm:w-96">
@@ -216,8 +230,8 @@ export function MobileTOC({
               On this page
             </SheetTitle>
           </SheetHeader>
-          <ScrollArea className="h-[calc(100vh-8rem)] mt-6">
-            <div ref={containerRef} className="pr-4">
+          <ScrollArea className="h-[calc(100vh-8rem)]">
+            <div ref={containerRef} className="px-4 py-2">
               <nav className="space-y-0.5">
                 {toc.map((item) => (
                   <TOCItem
@@ -239,7 +253,11 @@ export function MobileTOC({
 }
 
 /** Combined TOC component */
-export function TableOfContents({ toc, config, className }: TableOfContentsProps) {
+export function TableOfContents({
+  toc,
+  config,
+  className,
+}: TableOfContentsProps) {
   if (toc.length === 0) return null;
 
   return (
