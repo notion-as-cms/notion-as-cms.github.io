@@ -2,7 +2,7 @@ import { Client } from "@notionhq/client";
 import { getPublishedPosts, getTags } from "./notion";
 import { isNotionPage } from "./notion-mappers";
 import { getPostsPerPage } from "./config";
-import type { NotionSourceConfig, Tag } from "@/registry/default/notion-cms/types/notion";
+import type { NotionSourceConfig, Tag } from "@/components/notion/types";
 
 type StaticParam = { slug: string[] };
 

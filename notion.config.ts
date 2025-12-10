@@ -1,4 +1,4 @@
-import { defineNotionConfig } from "@/registry/default/notion-cms/lib/config";
+import { defineNotionConfig } from "@/lib/notion/config";
 
 /**
  * Notion CMS Configuration

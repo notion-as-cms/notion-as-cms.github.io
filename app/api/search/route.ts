@@ -1,7 +1,7 @@
 import { createSearchAPI } from "fumadocs-core/search/server";
 import notionConfig from "@/notion.config";
-import { createNotionClient } from "@/registry/default/notion-cms/lib/notion-client";
-import { createSearchIndexFetcher } from "@/registry/default/notion-cms/lib/search";
+import { createNotionClient } from "@/lib/notion/notion-client";
+import { createSearchIndexFetcher } from "@/lib/notion/search";
 
 const { client } = createNotionClient(notionConfig.apiKey);
 const getSearchIndexes = createSearchIndexFetcher(client, notionConfig.sources);

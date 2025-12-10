@@ -1,6 +1,6 @@
 import { Client } from "@notionhq/client";
 import { getPublishedPosts } from "./notion";
-import type { NotionSourceConfig } from "@/registry/default/notion-cms/types/notion";
+import type { NotionSourceConfig } from "@/components/notion/types";
 
 /**
  * Content section structure for search index

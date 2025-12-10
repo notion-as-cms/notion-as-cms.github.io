@@ -2,7 +2,7 @@ import { Renderer } from "./renderer";
 import { MobileTOC, DesktopTOC, type TOCConfig } from "./table-of-contents";
 import Image from "next/image";
 import Link from "next/link";
-import type { Tag, TOCEntry } from "@/registry/default/notion-cms/types/notion";
+import type { Tag, TOCEntry } from "@/components/notion/types";
 import type { ExtendedRecordMap } from "notion-types";
 import { Calendar } from "lucide-react";
 

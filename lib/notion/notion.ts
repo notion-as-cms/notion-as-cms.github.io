@@ -5,7 +5,7 @@ import {
   PageObjectResponse,
   RichTextItemResponse,
 } from "@notionhq/client/build/src/api-endpoints";
-import type { PageInfo, Tag, TOCEntry } from "@/registry/default/notion-cms/types/notion";
+import type { PageInfo, Tag, TOCEntry } from "@/components/notion/types";
 import { findPageBlock } from "./notion-utils";
 
 /**

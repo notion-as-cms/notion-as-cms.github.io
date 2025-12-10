@@ -1,7 +1,7 @@
 import { ItemList } from "./item-list";
-import { mapNotionPostToBlogPost } from "@/registry/default/notion-cms/lib/notion-mappers";
-import type { ContentItem, ContentListProps } from "@/registry/default/notion-cms/types/notion";
-import { DEFAULT_POSTS_PER_PAGE } from "@/registry/default/notion-cms/lib/config";
+import { mapNotionPostToBlogPost } from "@/lib/notion/notion-mappers";
+import type { ContentItem, ContentListProps } from "@/components/notion/types";
+import { DEFAULT_POSTS_PER_PAGE } from "@/lib/notion/config";
 
 export function ContentList({
   posts,

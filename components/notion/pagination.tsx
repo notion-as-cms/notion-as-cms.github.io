@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { PaginationProps } from "@/registry/default/notion-cms/types/notion";
+import type { PaginationProps } from "@/components/notion/types";
 
 export function Pagination({
   currentPage,

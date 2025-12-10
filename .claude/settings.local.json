@@ -13,7 +13,10 @@
       "Bash(pnpm build:registry:*)",
       "Bash(pnpm registry:build:*)",
       "Bash(pnpm add:*)",
-      "Bash(pnpm why:*)"
+      "Bash(pnpm why:*)",
+      "Bash(/Users/rajiv/Projects/Rjvim/fumadocs-notion-blog/lib/notion )",
+      "Bash(/Users/rajiv/Projects/Rjvim/fumadocs-notion-blog/app )",
+      "Bash(/Users/rajiv/Projects/Rjvim/fumadocs-notion-blog/notion.config.ts )"
     ]
   }
 }

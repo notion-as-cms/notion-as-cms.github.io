@@ -1,4 +1,4 @@
-import type { ContentItem, NotionPage, Tag } from "@/registry/default/notion-cms/types/notion";
+import type { ContentItem, NotionPage, Tag } from "@/components/notion/types";
 
 export function isNotionPage(page: any): page is NotionPage {
   return page && typeof page === "object" && "properties" in page;

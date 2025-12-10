@@ -1,7 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Pagination } from "./pagination";
-import type { ContentItem, ItemListProps } from "@/registry/default/notion-cms/types/notion";
+import type { ContentItem, ItemListProps } from "@/components/notion/types";
 
 export function ItemList({
   posts,

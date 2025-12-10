@@ -15,7 +15,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import type {
   TOCEntry,
   TOCConfig,
-} from "@/registry/default/notion-cms/types/notion";
+} from "@/components/notion/types";
 
 // Re-export for convenience
 export type { TOCConfig };

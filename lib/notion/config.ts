@@ -1,4 +1,4 @@
-import type { NotionConfig, NotionSourceConfig } from "@/registry/default/notion-cms/types/notion";
+import type { NotionConfig, NotionSourceConfig } from "@/components/notion/types";
 
 /**
  * Define your Notion configuration with multiple content sources.

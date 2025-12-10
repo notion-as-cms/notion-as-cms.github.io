@@ -1,6 +1,6 @@
 import notionConfig from "@/notion.config";
-import { createNotionClient } from "@/registry/default/notion-cms/lib/notion-client";
-import { createContentSource } from "@/registry/default/notion-cms/lib/content-page";
+import { createNotionClient } from "@/lib/notion/notion-client";
+import { createContentSource } from "@/lib/notion/content-page";
 
 const source = notionConfig.sources.blog;
 const { client, compatClient } = createNotionClient(notionConfig.apiKey);

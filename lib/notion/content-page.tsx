@@ -1,11 +1,11 @@
 import type { Client } from "@notionhq/client";
 import type { NotionCompatAPI } from "notion-compat";
-import type { NotionPage, NotionSourceConfig, Tag, TOCConfig } from "@/registry/default/notion-cms/types/notion";
-import { getPage, getPageBySlug, getPublishedPosts, getTags } from "@/registry/default/notion-cms/lib/notion";
-import { generateStaticParams } from "@/registry/default/notion-cms/lib/static-params";
-import { getPostsPerPage } from "@/registry/default/notion-cms/lib/config";
-import { ContentList } from "@/registry/default/notion-cms/components/content-list";
-import { ContentPage } from "@/registry/default/notion-cms/components/content-page";
+import type { NotionPage, NotionSourceConfig, Tag, TOCConfig } from "@/components/notion/types";
+import { getPage, getPageBySlug, getPublishedPosts, getTags } from "@/lib/notion/notion";
+import { generateStaticParams } from "@/lib/notion/static-params";
+import { getPostsPerPage } from "@/lib/notion/config";
+import { ContentList } from "@/components/notion/content-list";
+import { ContentPage } from "@/components/notion/content-page";
 import {
   isRootPage,
   isContentPage,
@@ -14,7 +14,7 @@ import {
   isPaginatedPage,
   getTagSlug,
   getContentSlug,
-} from "@/registry/default/notion-cms/lib/page-utils";
+} from "@/lib/notion/page-utils";
 
 export interface ContentPageOptions {
   source: NotionSourceConfig;

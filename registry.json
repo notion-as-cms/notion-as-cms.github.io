@@ -28,84 +28,84 @@
       },
       "files": [
         {
-          "path": "registry/default/notion-cms/components/content-page.tsx",
+          "path": "components/notion/content-page.tsx",
           "type": "registry:component",
           "target": "components/notion/content-page.tsx"
         },
         {
-          "path": "registry/default/notion-cms/components/content-list.tsx",
+          "path": "components/notion/content-list.tsx",
           "type": "registry:component",
           "target": "components/notion/content-list.tsx"
         },
         {
-          "path": "registry/default/notion-cms/components/item-list.tsx",
+          "path": "components/notion/item-list.tsx",
           "type": "registry:component",
           "target": "components/notion/item-list.tsx"
         },
         {
-          "path": "registry/default/notion-cms/components/pagination.tsx",
+          "path": "components/notion/pagination.tsx",
           "type": "registry:component",
           "target": "components/notion/pagination.tsx"
         },
         {
-          "path": "registry/default/notion-cms/components/renderer.tsx",
+          "path": "components/notion/renderer.tsx",
           "type": "registry:component",
           "target": "components/notion/renderer.tsx"
         },
         {
-          "path": "registry/default/notion-cms/components/table-of-contents.tsx",
+          "path": "components/notion/table-of-contents.tsx",
           "type": "registry:component",
           "target": "components/notion/table-of-contents.tsx"
         },
         {
-          "path": "registry/default/notion-cms/lib/config.ts",
+          "path": "lib/notion/config.ts",
           "type": "registry:lib",
           "target": "lib/notion/config.ts"
         },
         {
-          "path": "registry/default/notion-cms/lib/notion-client.ts",
+          "path": "lib/notion/notion-client.ts",
           "type": "registry:lib",
           "target": "lib/notion/notion-client.ts"
         },
         {
-          "path": "registry/default/notion-cms/lib/notion.ts",
+          "path": "lib/notion/notion.ts",
           "type": "registry:lib",
           "target": "lib/notion/notion.ts"
         },
         {
-          "path": "registry/default/notion-cms/lib/notion-mappers.ts",
+          "path": "lib/notion/notion-mappers.ts",
           "type": "registry:lib",
           "target": "lib/notion/notion-mappers.ts"
         },
         {
-          "path": "registry/default/notion-cms/lib/notion-utils.ts",
+          "path": "lib/notion/notion-utils.ts",
           "type": "registry:lib",
           "target": "lib/notion/notion-utils.ts"
         },
         {
-          "path": "registry/default/notion-cms/lib/page-utils.ts",
+          "path": "lib/notion/page-utils.ts",
           "type": "registry:lib",
           "target": "lib/notion/page-utils.ts"
         },
         {
-          "path": "registry/default/notion-cms/lib/static-params.ts",
+          "path": "lib/notion/static-params.ts",
           "type": "registry:lib",
           "target": "lib/notion/static-params.ts"
         },
         {
-          "path": "registry/default/notion-cms/lib/content-page.tsx",
+          "path": "lib/notion/content-page.tsx",
           "type": "registry:lib",
           "target": "lib/notion/content-page.tsx"
         },
         {
-          "path": "registry/default/notion-cms/lib/search.ts",
+          "path": "lib/notion/search.ts",
           "type": "registry:lib",
           "target": "lib/notion/search.ts"
         },
         {
-          "path": "registry/default/notion-cms/types/notion.ts",
+          "path": "components/notion/types.ts",
           "type": "registry:lib",
-          "target": "types/notion.ts"
+          "target": "components/notion/types.ts"
         },
         {
           "path": "notion.config.ts",
@@ -121,7 +121,8 @@
           "path": "app/(home)/blog/layout.tsx",
           "type": "registry:page",
           "target": "app/blog/layout.tsx"
-        }      ]
+        }
+      ]
     }
   ]
 }
