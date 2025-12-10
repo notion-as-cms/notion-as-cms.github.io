@@ -47,11 +47,7 @@ const toTocId = (elementId: string) => {
  * - Syncs with URL hash on load and hash changes
  * - Updates URL when scrolling
  */
-function useActiveAnchor(
-  toc: TOCEntry[],
-  headerOffset: number,
-  setActiveIdExternal?: (id: string | null) => void
-) {
+function useActiveAnchor(toc: TOCEntry[], headerOffset: number) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const isScrollingRef = useRef(false);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
