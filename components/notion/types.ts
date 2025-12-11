@@ -132,10 +132,28 @@ export type BlogListProps = ContentListProps;
 export interface ContentPageProps {
   recordMap: NotionPageWithInfo;
   basePath?: string;
+  tocConfig?: TOCConfig;
 }
 
 // Alias for backward compatibility
 export type BlogPostProps = ContentPageProps;
+
+// Props passed to custom list components
+export interface CustomListComponentProps {
+  items: ContentItem[];
+  tags: Tag[];
+  currentPage: number;
+  totalPages: number;
+  heading: string;
+  basePath: string;
+}
+
+// Props passed to custom page components
+export interface CustomPageComponentProps {
+  recordMap: NotionPageWithInfo;
+  basePath: string;
+  tocConfig?: TOCConfig;
+}
 
 export interface PaginationProps {
   currentPage: number;

@@ -14,11 +14,11 @@ export function ItemList({
   configuration = {},
 }: ItemListProps) {
   return (
-    <div className="container mx-auto px-4 py-8 lg:py-12">
+    <div className="py-8 lg:py-12">
       <section className="mb-12 text-center">
         <h1 className="text-4xl font-bold mb-4">{heading}</h1>
         {description && (
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-lg text-muted-foreground">
             {description}
           </p>
         )}

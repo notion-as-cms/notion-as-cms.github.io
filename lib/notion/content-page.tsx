@@ -1,11 +1,22 @@
 import type { Client } from "@notionhq/client";
 import type { NotionCompatAPI } from "notion-compat";
-import type { NotionPage, NotionSourceConfig, Tag, TOCConfig, Author } from "@/components/notion/types";
+import type { ComponentType } from "react";
+import type {
+  NotionPage,
+  NotionSourceConfig,
+  Tag,
+  TOCConfig,
+  Author,
+  CustomListComponentProps,
+  CustomPageComponentProps,
+  ContentItem,
+} from "@/components/notion/types";
 import { getPage, getPageBySlug, getPublishedPosts, getTags, getAuthors } from "@/lib/notion/notion";
 import { generateStaticParams } from "@/lib/notion/static-params";
 import { getPostsPerPage } from "@/lib/notion/config";
 import { ContentList } from "@/components/notion/content-list";
 import { ContentPage } from "@/components/notion/content-page";
+import { mapNotionPageToContentItem } from "@/lib/notion/notion-mappers";
 import {
   isRootPage,
   isContentPage,
@@ -30,6 +41,10 @@ export interface ContentPageOptions {
   tocConfig?: TOCConfig;
   /** Author database ID for resolving author relations */
   authorDatabaseId?: string;
+  /** Custom component for list pages (replaces default ContentList) */
+  ListComponent?: ComponentType<CustomListComponentProps>;
+  /** Custom component for detail pages (replaces default ContentPage) */
+  PageComponent?: ComponentType<CustomPageComponentProps>;
 }
 
 /**
@@ -46,6 +61,8 @@ export function createContentSource(options: ContentPageOptions) {
     contentLabel = "Post",
     tocConfig,
     authorDatabaseId,
+    ListComponent,
+    PageComponent,
   } = options;
 
   // Generate static params for this source
@@ -75,6 +92,19 @@ export function createContentSource(options: ContentPageOptions) {
 
     const postsPerPage = getPostsPerPage(source);
 
+    // Helper to map posts to content items
+    const mapPosts = (postsToMap: NotionPage[]): ContentItem[] =>
+      postsToMap
+        .map((p) => mapNotionPageToContentItem(p, tags, source.basePath, authors))
+        .filter((item): item is ContentItem => item !== null);
+
+    // Helper to get pagination info
+    const getPageNumber = (params: { slug?: string[] }): number => {
+      if (!params.slug || params.slug.length === 0) return 1;
+      const page = parseInt(params.slug[params.slug.length - 1], 10);
+      return isNaN(page) ? 1 : Math.max(1, page);
+    };
+
     // Handle individual content page
     if (isContentPage(pageParams)) {
       const contentSlug = getContentSlug(pageParams);
@@ -87,6 +117,11 @@ export function createContentSource(options: ContentPageOptions) {
         return <div className="max-w-3xl mx-auto p-4">{contentLabel} not found</div>;
       }
       const recordMap = await getPage(compatClient, post.id, tags);
+
+      // Use custom component if provided
+      if (PageComponent) {
+        return <PageComponent recordMap={recordMap} basePath={source.basePath} tocConfig={tocConfig} />;
+      }
       return <ContentPage recordMap={recordMap} basePath={source.basePath} tocConfig={tocConfig} />;
     }
 
@@ -107,6 +142,23 @@ export function createContentSource(options: ContentPageOptions) {
         return postTags.some((t: { id: string }) => t.id === tag.id);
       });
 
+      // Use custom component if provided
+      if (ListComponent) {
+        const items = mapPosts(taggedPosts);
+        const currentPage = getPageNumber(pageParams);
+        const totalPages = Math.ceil(items.length / postsPerPage);
+        return (
+          <ListComponent
+            items={items.slice((currentPage - 1) * postsPerPage, currentPage * postsPerPage)}
+            tags={tags}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            heading={`${tagHeadingPrefix} ${tag.label}`}
+            basePath={`${source.basePath}/tag/${tag.value}`}
+          />
+        );
+      }
+
       return (
         <ContentList
           posts={taggedPosts}
@@ -123,6 +175,23 @@ export function createContentSource(options: ContentPageOptions) {
 
     // Handle root and paginated pages
     if (isRootPage(pageParams) || isPaginatedPage(pageParams)) {
+      // Use custom component if provided
+      if (ListComponent) {
+        const items = mapPosts(posts);
+        const currentPage = getPageNumber(pageParams);
+        const totalPages = Math.ceil(items.length / postsPerPage);
+        return (
+          <ListComponent
+            items={items.slice((currentPage - 1) * postsPerPage, currentPage * postsPerPage)}
+            tags={tags}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            heading={listHeading}
+            basePath={source.basePath}
+          />
+        );
+      }
+
       return (
         <ContentList
           posts={posts}

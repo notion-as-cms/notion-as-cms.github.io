@@ -32,9 +32,9 @@ export function ContentPage({ recordMap, basePath = "/blog", tocConfig }: Conten
   const hasTOC = toc.length > 0;
 
   return (
-    <article className="min-h-screen">
+    <article>
       {/* Header Section */}
-      <header className="container max-w-5xl mx-auto px-4 py-8 lg:py-12">
+      <header className="py-8 lg:py-12">
         {/* Cover Image */}
         {cover && (
           <div className="relative w-full h-64 md:h-96 mb-8 rounded-lg overflow-hidden">
@@ -92,8 +92,7 @@ export function ContentPage({ recordMap, basePath = "/blog", tocConfig }: Conten
       </header>
 
       {/* Content Section with TOC */}
-      <div className="bg-muted/50">
-        <div className="container max-w-5xl mx-auto px-4 py-8 lg:py-12">
+      <div className="py-8 lg:py-12">
           {/* Mobile TOC - shown at top on mobile */}
           {hasTOC && <MobileTOC toc={toc} config={tocConfig} />}
 
@@ -130,7 +129,6 @@ export function ContentPage({ recordMap, basePath = "/blog", tocConfig }: Conten
               </div>
             </div>
           </div>
-        </div>
       </div>
     </article>
   );
