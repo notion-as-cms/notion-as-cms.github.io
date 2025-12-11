@@ -112,19 +112,54 @@
           "target": "components/notion/types.ts"
         },
         {
-          "path": "notion.config.ts",
+          "path": "components/notion/README.md",
           "type": "registry:file",
-          "target": "notion.config.ts"
+          "target": "components/notion/README.md"
         },
         {
-          "path": "app/(home)/blog/[[...slug]]/page.tsx",
-          "type": "registry:page",
-          "target": "app/blog/[[...slug]]/page.tsx"
+          "path": "components/notion/examples/notion.config.ts",
+          "type": "registry:file",
+          "target": "components/notion/examples/notion.config.ts"
         },
         {
-          "path": "app/(home)/blog/layout.tsx",
-          "type": "registry:page",
-          "target": "app/blog/layout.tsx"
+          "path": "components/notion/examples/blog-page.tsx",
+          "type": "registry:file",
+          "target": "components/notion/examples/blog-page.tsx"
+        },
+        {
+          "path": "components/notion/examples/blog-layout.tsx",
+          "type": "registry:file",
+          "target": "components/notion/examples/blog-layout.tsx"
+        },
+        {
+          "path": "components/notion/examples/changelog-list.tsx",
+          "type": "registry:component",
+          "target": "components/notion/examples/changelog-list.tsx"
+        },
+        {
+          "path": "components/notion/examples/changelog-page.tsx",
+          "type": "registry:component",
+          "target": "components/notion/examples/changelog-page.tsx"
+        },
+        {
+          "path": "components/notion/examples/changelog-route.tsx",
+          "type": "registry:file",
+          "target": "components/notion/examples/changelog-route.tsx"
+        },
+        {
+          "path": "components/notion/examples/news-list.tsx",
+          "type": "registry:component",
+          "target": "components/notion/examples/news-list.tsx"
+        },
+        {
+          "path": "components/notion/examples/news-route.tsx",
+          "type": "registry:file",
+          "target": "components/notion/examples/news-route.tsx"
+        },
+        {
+          "path": "components/notion/examples/primitives-example.tsx",
+          "type": "registry:file",
+          "target": "components/notion/examples/primitives-example.tsx"
         }
       ]
     }

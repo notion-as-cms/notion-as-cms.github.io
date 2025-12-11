@@ -31,12 +31,13 @@ export function mapNotionPageToContentItem(
 
   // Author can be either a "people" property or a "relation" to an Author database
   let author: string | undefined;
-  if (page.properties.Author?.people?.[0]?.name) {
+  const authorProp = page.properties.Author as any;
+  if (authorProp?.people?.[0]?.name) {
     // People type
-    author = page.properties.Author.people[0].name;
-  } else if (page.properties.Author?.relation?.[0]?.id) {
+    author = authorProp.people[0].name;
+  } else if (authorProp?.relation?.[0]?.id) {
     // Relation type - look up in authors array
-    const authorId = page.properties.Author.relation[0].id;
+    const authorId = authorProp.relation[0].id;
     const foundAuthor = authors.find((a) => a.id === authorId);
     author = foundAuthor?.name;
   }
