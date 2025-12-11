@@ -1,4 +1,4 @@
-import type { ContentItem, NotionPage, Tag } from "@/components/notion/types";
+import type { Author, ContentItem, NotionPage, Tag } from "@/components/notion/types";
 
 export function isNotionPage(page: any): page is NotionPage {
   return page && typeof page === "object" && "properties" in page;
@@ -9,11 +9,13 @@ export function isNotionPage(page: any): page is NotionPage {
  * @param page - The Notion page object
  * @param tags - Available tags to resolve tag relations
  * @param basePath - Base path for the content URL (e.g., '/blog', '/changelog')
+ * @param authors - Optional authors map to resolve author relations
  */
 export function mapNotionPageToContentItem(
   page: any,
   tags: Tag[] = [],
-  basePath: string = "/blog"
+  basePath: string = "/blog",
+  authors: Author[] = []
 ): ContentItem | null {
   if (!isNotionPage(page)) return null;
 
@@ -26,7 +28,19 @@ export function mapNotionPageToContentItem(
   const description =
     page.properties.Description?.rich_text?.[0]?.plain_text || "";
   const date = page.properties.Date?.date?.start || new Date().toISOString();
-  const author = page.properties.Author?.people?.[0]?.name;
+
+  // Author can be either a "people" property or a "relation" to an Author database
+  let author: string | undefined;
+  if (page.properties.Author?.people?.[0]?.name) {
+    // People type
+    author = page.properties.Author.people[0].name;
+  } else if (page.properties.Author?.relation?.[0]?.id) {
+    // Relation type - look up in authors array
+    const authorId = page.properties.Author.relation[0].id;
+    const foundAuthor = authors.find((a) => a.id === authorId);
+    author = foundAuthor?.name;
+  }
+
   const slug = page.properties.Slug?.rich_text?.[0]?.plain_text || page.id;
 
   // Ensure required fields are present

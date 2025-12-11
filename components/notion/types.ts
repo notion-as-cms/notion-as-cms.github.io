@@ -110,9 +110,15 @@ export interface ContentConfiguration {
 // Alias for backward compatibility
 export type BlogConfiguration = ContentConfiguration;
 
+export interface Author {
+  id: string;
+  name: string;
+}
+
 export interface ContentListProps {
   posts: NotionPage[];
   tags: Tag[];
+  authors?: Author[];
   pageParams: { slug?: string[] };
   isPaginated: boolean;
   heading?: string;

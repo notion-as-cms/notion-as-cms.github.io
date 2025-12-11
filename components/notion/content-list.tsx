@@ -6,6 +6,7 @@ import { DEFAULT_POSTS_PER_PAGE } from "@/lib/notion/config";
 export function ContentList({
   posts,
   tags,
+  authors = [],
   pageParams,
   isPaginated = false,
   heading = "Latest Posts",
@@ -16,9 +17,9 @@ export function ContentList({
   const postsPerPage = configuration?.pageSize ?? DEFAULT_POSTS_PER_PAGE;
 
   // Map all posts, filtering out any null or invalid posts
-  // Pass basePath to mapper so URLs are generated correctly
+  // Pass basePath and authors to mapper so URLs and author names are resolved correctly
   const allBlogPosts = posts
-    .map((post) => mapNotionPostToBlogPost(post, tags, basePath))
+    .map((post) => mapNotionPostToBlogPost(post, tags, basePath, authors))
     .filter((post): post is ContentItem => post !== null);
 
   // Calculate total pages based on all valid posts

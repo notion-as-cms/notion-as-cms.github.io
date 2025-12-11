@@ -15,6 +15,7 @@ const { generateStaticParams, Page } = createContentSource({
   tocConfig: {
     mobileTopClass: "top-14",
   },
+  authorDatabaseId: notionConfig.authorDatabaseId,
 });
 
 export { generateStaticParams };

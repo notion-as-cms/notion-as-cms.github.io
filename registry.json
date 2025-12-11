@@ -110,21 +110,6 @@
           "path": "components/notion/types.ts",
           "type": "registry:lib",
           "target": "components/notion/types.ts"
-        },
-        {
-          "path": "notion.config.ts",
-          "type": "registry:file",
-          "target": "notion.config.ts"
-        },
-        {
-          "path": "app/(home)/blog/[[...slug]]/page.tsx",
-          "type": "registry:page",
-          "target": "app/blog/[[...slug]]/page.tsx"
-        },
-        {
-          "path": "app/(home)/blog/layout.tsx",
-          "type": "registry:page",
-          "target": "app/blog/layout.tsx"
         }
       ]
     }

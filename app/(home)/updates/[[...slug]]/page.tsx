@@ -12,6 +12,7 @@ const { generateStaticParams, Page } = createContentSource({
   listHeading: "Updates",
   tagHeadingPrefix: "Updates tagged with:",
   contentLabel: "Update",
+  authorDatabaseId: notionConfig.authorDatabaseId,
 });
 
 export { generateStaticParams };

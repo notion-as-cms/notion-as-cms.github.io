@@ -1,7 +1,7 @@
 import type { Client } from "@notionhq/client";
 import type { NotionCompatAPI } from "notion-compat";
-import type { NotionPage, NotionSourceConfig, Tag, TOCConfig } from "@/components/notion/types";
-import { getPage, getPageBySlug, getPublishedPosts, getTags } from "@/lib/notion/notion";
+import type { NotionPage, NotionSourceConfig, Tag, TOCConfig, Author } from "@/components/notion/types";
+import { getPage, getPageBySlug, getPublishedPosts, getTags, getAuthors } from "@/lib/notion/notion";
 import { generateStaticParams } from "@/lib/notion/static-params";
 import { getPostsPerPage } from "@/lib/notion/config";
 import { ContentList } from "@/components/notion/content-list";
@@ -28,6 +28,8 @@ export interface ContentPageOptions {
   contentLabel?: string;
   /** TOC configuration for header offset and mobile positioning */
   tocConfig?: TOCConfig;
+  /** Author database ID for resolving author relations */
+  authorDatabaseId?: string;
 }
 
 /**
@@ -43,6 +45,7 @@ export function createContentSource(options: ContentPageOptions) {
     tagHeadingPrefix = "Tagged with:",
     contentLabel = "Post",
     tocConfig,
+    authorDatabaseId,
   } = options;
 
   // Generate static params for this source
@@ -64,6 +67,10 @@ export function createContentSource(options: ContentPageOptions) {
 
     const tags: Tag[] = source.tagDatabaseId
       ? await getTags(client, source.tagDatabaseId)
+      : [];
+
+    const authors: Author[] = authorDatabaseId
+      ? await getAuthors(client, authorDatabaseId)
       : [];
 
     const postsPerPage = getPostsPerPage(source);
@@ -104,6 +111,7 @@ export function createContentSource(options: ContentPageOptions) {
         <ContentList
           posts={taggedPosts}
           tags={tags}
+          authors={authors}
           pageParams={pageParams}
           isPaginated={true}
           heading={`${tagHeadingPrefix} ${tag.label}`}
@@ -119,6 +127,7 @@ export function createContentSource(options: ContentPageOptions) {
         <ContentList
           posts={posts}
           tags={tags}
+          authors={authors}
           pageParams={pageParams}
           isPaginated={true}
           heading={listHeading}

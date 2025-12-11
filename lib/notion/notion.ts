@@ -114,6 +114,23 @@ export async function getPublishedPosts(client: Client, databaseId: string) {
 }
 
 /**
+ * Get all authors from an author database.
+ */
+export async function getAuthors(
+  client: Client,
+  authorDatabaseId: string
+): Promise<{ id: string; name: string }[]> {
+  const response = await client.databases.query({
+    database_id: authorDatabaseId,
+  });
+
+  return response.results.map((page: any) => ({
+    id: page.id,
+    name: page.properties.Name?.title?.[0]?.plain_text || "Unknown",
+  }));
+}
+
+/**
  * Get a page by its slug from a database.
  */
 export async function getPageBySlug(
