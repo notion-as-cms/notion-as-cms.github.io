@@ -75,6 +75,8 @@ jobs:
           NOTION_TAG_DATABASE_ID: ${{ secrets.NOTION_TAG_DATABASE_ID }}
           NOTION_AUTHOR_DATABASE_ID: ${{ secrets.NOTION_AUTHOR_DATABASE_ID }}
           NOTION_UPDATES_DATABASE_ID: ${{ secrets.NOTION_UPDATES_DATABASE_ID }}
+          NOTION_CHANGELOGS_DATABASE_ID: ${{ secrets.NOTION_CHANGELOGS_DATABASE_ID }}
+          NOTION_NEWS_DATABASE_ID: ${{ secrets.NOTION_NEWS_DATABASE_ID }}
 
       - name: Validate static export
         run: |

@@ -14,17 +14,28 @@ export function defineNotionConfig(config: NotionConfig): NotionConfig {
     throw new Error("At least one source must be defined");
   }
 
-  // Validate each source
+  // Filter out sources with missing databaseId (optional sources)
+  const validSources: Record<string, NotionSourceConfig> = {};
   for (const [name, source] of Object.entries(config.sources)) {
     if (!source.databaseId) {
-      throw new Error(`Source "${name}" is missing required databaseId`);
+      console.warn(`Source "${name}" skipped: missing databaseId`);
+      continue;
     }
     if (!source.basePath) {
-      throw new Error(`Source "${name}" is missing required basePath`);
+      console.warn(`Source "${name}" skipped: missing basePath`);
+      continue;
     }
+    validSources[name] = source;
   }
 
-  return config;
+  if (Object.keys(validSources).length === 0) {
+    throw new Error("At least one valid source with databaseId is required");
+  }
+
+  return {
+    ...config,
+    sources: validSources,
+  };
 }
 
 /**
