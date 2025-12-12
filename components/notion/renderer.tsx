@@ -1,8 +1,9 @@
 "use client";
 import { NotionRenderer } from "react-notion-x";
-import type { ComponentProps } from "react";
+import { useState, useEffect, type ComponentProps } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { useTheme } from "next-themes";
 
 const Code = dynamic(() =>
   import("react-notion-x/build/third-party/code").then(async (m) => {
@@ -45,9 +46,17 @@ const Code = dynamic(() =>
 );
 
 export function Renderer(props: ComponentProps<typeof NotionRenderer>) {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <NotionRenderer
       {...props}
+      darkMode={mounted && resolvedTheme === "dark"}
       components={{
         nextLink: Link,
         Code,

@@ -13,16 +13,17 @@ import { NewsList } from "@/components/notion/examples/news-list";
 const source = notionConfig.sources.news;
 const { client, compatClient } = createNotionClient(notionConfig.apiKey);
 
-const { generateStaticParams, Page } = createContentSource({
+const { generateStaticParams, generateMetadata, Page } = createContentSource({
   source,
   client,
   compatClient,
   listHeading: "News",
   contentLabel: "Article",
   authorDatabaseId: notionConfig.authorDatabaseId,
+  siteName: "Notion CMS",
   // Custom component for list pages - uses card grid layout
   ListComponent: NewsList,
 });
 
-export { generateStaticParams };
+export { generateStaticParams, generateMetadata };
 export default Page;

@@ -14,17 +14,18 @@ import { ChangelogPage } from "@/components/notion/examples/changelog-page";
 const source = notionConfig.sources.changelog;
 const { client, compatClient } = createNotionClient(notionConfig.apiKey);
 
-const { generateStaticParams, Page } = createContentSource({
+const { generateStaticParams, generateMetadata, Page } = createContentSource({
   source,
   client,
   compatClient,
   listHeading: "Changelog",
   contentLabel: "Entry",
   authorDatabaseId: notionConfig.authorDatabaseId,
+  siteName: "Notion CMS",
   // Custom components - uses timeline layout for list, simple layout for detail
   ListComponent: ChangelogList,
   PageComponent: ChangelogPage,
 });
 
-export { generateStaticParams };
+export { generateStaticParams, generateMetadata };
 export default Page;

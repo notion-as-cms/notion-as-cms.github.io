@@ -5,7 +5,7 @@ import { createContentSource } from "@/lib/notion/content-page";
 const source = notionConfig.sources.blog;
 const { client, compatClient } = createNotionClient(notionConfig.apiKey);
 
-const { generateStaticParams, Page } = createContentSource({
+const { generateStaticParams, generateMetadata, Page } = createContentSource({
   source,
   client,
   compatClient,
@@ -16,7 +16,8 @@ const { generateStaticParams, Page } = createContentSource({
     mobileTopClass: "top-14",
   },
   authorDatabaseId: notionConfig.authorDatabaseId,
+  siteName: "Notion CMS",
 });
 
-export { generateStaticParams };
+export { generateStaticParams, generateMetadata };
 export default Page;

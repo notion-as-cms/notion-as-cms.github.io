@@ -94,7 +94,7 @@ import { createContentSource } from "@/lib/notion/content-page";
 const source = notionConfig.sources.blog;
 const { client, compatClient } = createNotionClient(notionConfig.apiKey);
 
-const { generateStaticParams, Page } = createContentSource({
+const { generateStaticParams, generateMetadata, Page } = createContentSource({
   source,
   client,
   compatClient,
@@ -102,9 +102,12 @@ const { generateStaticParams, Page } = createContentSource({
   tagHeadingPrefix: "Posts tagged with:",
   contentLabel: "Post",
   authorDatabaseId: notionConfig.authorDatabaseId,
+  // SEO metadata options
+  siteName: "My Site",
+  baseUrl: "https://example.com",
 });
 
-export { generateStaticParams };
+export { generateStaticParams, generateMetadata };
 export default Page;
 ```
 
@@ -125,6 +128,59 @@ export default function Layout({ children }: { children: ReactNode }) {
 ```
 
 The components are **width-agnostic** - they expand to fill their container. Control width in your layout.
+
+## SEO Metadata
+
+`createContentSource` returns a `generateMetadata` function for automatic SEO:
+
+```typescript
+const { generateStaticParams, generateMetadata, Page } = createContentSource({
+  source,
+  client,
+  compatClient,
+  // SEO options
+  siteName: "My Site",
+  baseUrl: "https://example.com", // For canonical URLs
+});
+
+export { generateStaticParams, generateMetadata };
+```
+
+Generated metadata includes:
+- `title` - From Notion page "Name" property
+- `description` - From Notion page "Description" property
+- `openGraph` - Title, description, type, site name, cover image
+- `twitter` - Card, title, description, images
+- `alternates.canonical` - If baseUrl is set
+
+### Custom Metadata Transformation
+
+Use `transformMetadata` to integrate with your own metadata utilities:
+
+```typescript
+import { createMetadata } from "@/lib/metadata"; // Your utility
+
+const { generateStaticParams, generateMetadata, Page } = createContentSource({
+  source,
+  client,
+  compatClient,
+  siteName: "My Site",
+  baseUrl: "https://example.com",
+  // Transform metadata before returning
+  transformMetadata: (meta) => createMetadata({
+    ...meta,
+    title: `${meta.title} | My Site`, // Add suffix to all titles
+  }),
+});
+
+export { generateStaticParams, generateMetadata };
+```
+
+The `transformMetadata` function receives the generated metadata and returns modified metadata. This allows you to:
+- Add title prefixes/suffixes
+- Merge with site-wide defaults
+- Add custom og:image generation
+- Integrate with metadata utilities like `createMetadata()`
 
 ## Custom Components
 
@@ -327,7 +383,7 @@ For each source with `basePath: "/blog"`:
 Creates a typed configuration object.
 
 ### `createContentSource(options)`
-Returns `{ generateStaticParams, Page }` for use in Next.js App Router.
+Returns `{ generateStaticParams, generateMetadata, Page }` for use in Next.js App Router.
 
 Options:
 - `source` - Source config from `notionConfig.sources`
@@ -340,6 +396,9 @@ Options:
 - `tocConfig` - Optional table of contents configuration
 - `ListComponent` - Custom component for list pages
 - `PageComponent` - Custom component for detail pages
+- `siteName` - Site name for og:site_name
+- `baseUrl` - Base URL for canonical URLs and OG images
+- `transformMetadata` - Transform metadata before returning (for custom metadata utilities)
 
 ### `createNotionClient(apiKey)`
 Returns `{ client, compatClient }` for Notion API access.

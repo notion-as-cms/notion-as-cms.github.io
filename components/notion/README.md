@@ -26,6 +26,27 @@ NOTION_BLOG_DATABASE_ID=your_database_id
 - `Tags` (Relation) - Optional
 - `Author` (Relation) - Optional
 
+## SEO Metadata
+
+Export `generateMetadata` for automatic SEO:
+
+```typescript
+const { generateStaticParams, generateMetadata, Page } = createContentSource({
+  source,
+  client,
+  compatClient,
+  siteName: "My Site",
+  baseUrl: "https://example.com",
+  // Transform metadata with your own utility
+  transformMetadata: (meta) => ({
+    ...meta,
+    title: `${meta.title} | My Site`,
+  }),
+});
+
+export { generateStaticParams, generateMetadata };
+```
+
 ## Custom Components
 
 Pass custom components to `createContentSource`:

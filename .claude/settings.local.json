@@ -17,7 +17,8 @@
       "Bash(/Users/rajiv/Projects/Rjvim/fumadocs-notion-blog/lib/notion )",
       "Bash(/Users/rajiv/Projects/Rjvim/fumadocs-notion-blog/app )",
       "Bash(/Users/rajiv/Projects/Rjvim/fumadocs-notion-blog/notion.config.ts )",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(pnpm ls:*)"
     ]
   }
 }

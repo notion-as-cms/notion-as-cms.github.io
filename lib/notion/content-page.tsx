@@ -1,6 +1,7 @@
 import type { Client } from "@notionhq/client";
 import type { NotionCompatAPI } from "notion-compat";
 import type { ComponentType } from "react";
+import type { Metadata } from "next";
 import type {
   NotionPage,
   NotionSourceConfig,
@@ -45,6 +46,21 @@ export interface ContentPageOptions {
   ListComponent?: ComponentType<CustomListComponentProps>;
   /** Custom component for detail pages (replaces default ContentPage) */
   PageComponent?: ComponentType<CustomPageComponentProps>;
+  /** Site name for metadata (used in og:site_name) */
+  siteName?: string;
+  /** Base URL for canonical URLs and OG images */
+  baseUrl?: string;
+  /**
+   * Transform metadata before returning. Use this to integrate with your own
+   * metadata utilities like createMetadata().
+   *
+   * @example
+   * transformMetadata: (meta) => createMetadata({
+   *   ...meta,
+   *   title: `${meta.title} | My Site`,
+   * })
+   */
+  transformMetadata?: (metadata: Metadata) => Metadata;
 }
 
 /**
@@ -63,11 +79,101 @@ export function createContentSource(options: ContentPageOptions) {
     authorDatabaseId,
     ListComponent,
     PageComponent,
+    siteName,
+    baseUrl,
+    transformMetadata = (m) => m, // Default: pass through unchanged
   } = options;
 
   // Generate static params for this source
   async function generateParams() {
     return generateStaticParams(client, source);
+  }
+
+  // Generate metadata for SEO
+  async function generateMeta(props: {
+    params: Promise<{ slug?: string[] }>;
+  }): Promise<Metadata> {
+    const params = await props.params;
+    const { slug = [] } = params;
+    const pageParams = { slug };
+
+    // List page metadata
+    if (isRootPage(pageParams) || isPaginatedPage(pageParams)) {
+      const pageNum = isPaginatedPage(pageParams)
+        ? parseInt(slug[slug.length - 1], 10)
+        : 1;
+      const title = pageNum > 1 ? `${listHeading} - Page ${pageNum}` : listHeading;
+      return transformMetadata({
+        title,
+        description: `Browse all ${contentLabel.toLowerCase()}s`,
+        openGraph: {
+          title,
+          type: "website",
+          siteName,
+        },
+      });
+    }
+
+    // Tag page metadata
+    if (isTagPage(pageParams) || isPaginatedTagPage(pageParams)) {
+      const tagSlug = getTagSlug(pageParams);
+      const tags = source.tagDatabaseId
+        ? await getTags(client, source.tagDatabaseId)
+        : [];
+      const tag = tags.find((t) => t.value === tagSlug);
+      const tagName = tag?.label ?? tagSlug;
+      const title = `${tagHeadingPrefix} ${tagName}`;
+      return transformMetadata({
+        title,
+        description: `${contentLabel}s tagged with ${tagName}`,
+        openGraph: {
+          title,
+          type: "website",
+          siteName,
+        },
+      });
+    }
+
+    // Content page metadata
+    if (isContentPage(pageParams)) {
+      const contentSlug = getContentSlug(pageParams);
+      if (!contentSlug) {
+        return transformMetadata({ title: "Not Found" });
+      }
+
+      const post = await getPageBySlug(client, source.databaseId, contentSlug);
+      if (!post) {
+        return transformMetadata({ title: `${contentLabel} Not Found` });
+      }
+
+      const title = (post as NotionPage).properties?.Name?.title?.[0]?.plain_text ?? "Untitled";
+      const description = (post as NotionPage).properties?.Description?.rich_text?.[0]?.plain_text ?? "";
+      const cover = (post as { cover?: { external?: { url: string }; file?: { url: string } } }).cover;
+      const coverUrl = cover?.external?.url ?? cover?.file?.url;
+
+      const canonical = baseUrl ? `${baseUrl}${source.basePath}/${contentSlug}` : undefined;
+
+      return transformMetadata({
+        title,
+        description,
+        openGraph: {
+          title,
+          description,
+          type: "article",
+          siteName,
+          images: coverUrl ? [{ url: coverUrl }] : undefined,
+        },
+        twitter: {
+          card: coverUrl ? "summary_large_image" : "summary",
+          title,
+          description,
+          images: coverUrl ? [coverUrl] : undefined,
+        },
+        alternates: canonical ? { canonical } : undefined,
+      });
+    }
+
+    return transformMetadata({ title: listHeading });
   }
 
   // Main page component
@@ -215,5 +321,5 @@ export function createContentSource(options: ContentPageOptions) {
     );
   }
 
-  return { generateStaticParams: generateParams, Page };
+  return { generateStaticParams: generateParams, generateMetadata: generateMeta, Page };
 }
