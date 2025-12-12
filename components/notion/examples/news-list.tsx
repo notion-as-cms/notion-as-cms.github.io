@@ -1,10 +1,3 @@
-/**
- * Example: Custom News List Component
- *
- * This demonstrates a card-grid layout for news items,
- * completely different from the default blog list.
- */
-
 import Link from "next/link";
 import type { CustomListComponentProps } from "@/components/notion/types";
 import { Pagination } from "@/components/notion/pagination";
@@ -32,13 +25,19 @@ export function NewsList({
             key={item.id}
             className="group rounded-lg border border-border bg-card overflow-hidden hover:shadow-lg transition-shadow"
           >
-            {/* Card image placeholder */}
+            {/* Card image */}
             <div className="aspect-video bg-muted relative overflow-hidden">
-              <img
-                src={`https://picsum.photos/400/225?grayscale&title=${item.data.title}`}
-                alt={item.data.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
+              {item.data.cover ? (
+                <img
+                  src={item.data.cover}
+                  alt={item.data.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                  <span className="text-4xl">📰</span>
+                </div>
+              )}
               {/* Category badge */}
               {item.data.tags[0] && (
                 <span className="absolute top-3 left-3 px-2 py-1 text-xs font-medium bg-primary text-primary-foreground rounded">

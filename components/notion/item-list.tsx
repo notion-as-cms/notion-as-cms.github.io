@@ -18,9 +18,7 @@ export function ItemList({
       <section className="mb-12 text-center">
         <h1 className="text-4xl font-bold mb-4">{heading}</h1>
         {description && (
-          <p className="text-lg text-muted-foreground">
-            {description}
-          </p>
+          <p className="text-lg text-muted-foreground">{description}</p>
         )}
       </section>
 
@@ -47,7 +45,7 @@ export function ItemList({
 export { ItemList as PostList };
 
 function ItemCard({ item }: { item: ContentItem }) {
-  const { title, description, author, date, tags = [] } = item.data;
+  const { title, description, author, date, tags = [], cover } = item.data;
 
   return (
     <article className="group">
@@ -89,12 +87,18 @@ function ItemCard({ item }: { item: ContentItem }) {
         </div>
         <div className="order-first sm:order-last sm:col-span-5">
           <Link href={item.url} className="block">
-            <div className="aspect-[16/9] overflow-clip rounded-lg border border-border">
-              <img
-                src={`https://picsum.photos/400/225?grayscale&title=${title}`}
-                alt={title}
-                className="h-full w-full object-cover transition-opacity duration-200 fade-in hover:opacity-70"
-              />
+            <div className="aspect-[16/9] overflow-clip rounded-lg border border-border bg-muted">
+              {cover ? (
+                <img
+                  src={cover}
+                  alt={title}
+                  className="h-full w-full object-cover transition-opacity duration-200 hover:opacity-70"
+                />
+              ) : (
+                <div className="h-full w-full flex items-center justify-center text-muted-foreground">
+                  <span className="text-4xl">📝</span>
+                </div>
+              )}
             </div>
           </Link>
         </div>

@@ -1,5 +1,8 @@
 import type { ExtendedRecordMap, PageBlock } from "notion-types";
-import type { PageObjectResponse, DatabaseObjectResponse } from "@notionhq/client/build/src/api-endpoints";
+import type {
+  PageObjectResponse,
+  DatabaseObjectResponse,
+} from "@notionhq/client/build/src/api-endpoints";
 
 type NotionResponse = PageObjectResponse | DatabaseObjectResponse;
 
@@ -66,18 +69,15 @@ export type NotionPage = {
       date: { start: string };
     };
     Author?: {
-      people: Array<{ name: string }>;
+      people?: Array<{ name: string }>;
+      relation?: Array<{ id: string }>;
     };
     Tags?: {
       relation: Array<{ id: string }>;
     };
     [key: string]: any;
   };
-} & (
-  | { object: 'page' }
-  | { object: 'database' }
-  | { object: 'block' }
-);
+} & ({ object: "page" } | { object: "database" } | { object: "block" });
 
 export interface NotionPageWithInfo extends ExtendedRecordMap {
   pageInfo: PageInfo;
@@ -96,6 +96,7 @@ export interface ContentItem {
     date: string;
     author: string | undefined;
     tags: string[];
+    cover?: string;
   };
 }
 
