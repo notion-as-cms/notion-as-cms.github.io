@@ -44,7 +44,7 @@ export function ContentPage({ recordMap, basePath = "/blog", tocConfig }: Conten
               fill
               className="object-cover"
               priority
-              sizes="(max-width: 768px) 100vw, 1024px"
+              unoptimized
             />
           </div>
         )}

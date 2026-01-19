@@ -142,11 +142,8 @@ function useActiveAnchor(toc: TOCEntry[], headerOffset: number) {
 
       if (bestMatch && bestMatch !== activeId) {
         setActiveId(bestMatch);
-        // Update URL without triggering scroll
-        const newHash = `#${toElementId(bestMatch)}`;
-        if (window.location.hash !== newHash) {
-          window.history.replaceState(null, "", newHash);
-        }
+        // Only update visual highlight, don't update URL hash on scroll
+        // URL hash should only change when user explicitly clicks a link
       }
     };
 

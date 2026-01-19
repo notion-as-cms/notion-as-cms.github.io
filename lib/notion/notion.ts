@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { Client } from "@notionhq/client";
 import { NotionCompatAPI } from "notion-compat";
 import { getPageTableOfContents } from "notion-utils";
@@ -84,7 +85,7 @@ export const getPage = async (
 /**
  * Get all tags from a tags database.
  */
-export async function getTags(
+export const getTags = cache(async function getTags(
   client: Client,
   tagDatabaseId: string
 ): Promise<Tag[]> {
@@ -97,26 +98,33 @@ export async function getTags(
     value: page.properties.Slug.rich_text[0]?.plain_text || "",
     label: page.properties.Name.title[0]?.plain_text || "",
   }));
-}
+});
 
 /**
  * Get all published posts from a database.
  * Filters by Published status = "Done".
+ * Sorted by created_time descending (newest first).
  */
-export async function getPublishedPosts(client: Client, databaseId: string) {
+export const getPublishedPosts = cache(async function getPublishedPosts(client: Client, databaseId: string) {
   return client.databases.query({
     database_id: databaseId,
     filter: {
       property: "Published",
       status: { equals: "Done" },
     },
+    sorts: [
+      {
+        timestamp: "created_time",
+        direction: "descending",
+      },
+    ],
   });
-}
+});
 
 /**
  * Get all authors from an author database.
  */
-export async function getAuthors(
+export const getAuthors = cache(async function getAuthors(
   client: Client,
   authorDatabaseId: string
 ): Promise<{ id: string; name: string }[]> {
@@ -128,12 +136,12 @@ export async function getAuthors(
     id: page.id,
     name: page.properties.Name?.title?.[0]?.plain_text || "Unknown",
   }));
-}
+});
 
 /**
  * Get a page by its slug from a database.
  */
-export async function getPageBySlug(
+export const getPageBySlug = cache(async function getPageBySlug(
   client: Client,
   databaseId: string,
   slug: string
@@ -146,7 +154,7 @@ export async function getPageBySlug(
     },
   });
   return response.results[0];
-}
+});
 
 /**
  * Extract page info from a PageObjectResponse.

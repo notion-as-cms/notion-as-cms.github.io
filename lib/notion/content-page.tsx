@@ -50,6 +50,8 @@ export interface ContentPageOptions {
   siteName?: string;
   /** Base URL for canonical URLs and OG images */
   baseUrl?: string;
+  /** Base path for OG image generation (e.g., "blog-og" for /blog-og/[slug]/image.png) */
+  ogImageBase?: string;
   /**
    * Transform metadata before returning. Use this to integrate with your own
    * metadata utilities like createMetadata().
@@ -81,8 +83,24 @@ export function createContentSource(options: ContentPageOptions) {
     PageComponent,
     siteName,
     baseUrl,
+    ogImageBase,
     transformMetadata = (m) => m, // Default: pass through unchanged
   } = options;
+
+  // Helper to generate OG image URLs
+  const getOgImageUrl = (slugParts: string[] = []): string | undefined => {
+    if (!ogImageBase) return undefined;
+    const slugPath = slugParts.length > 0 ? `/${slugParts.join("/")}` : "";
+    return `/${ogImageBase}${slugPath}/image.png`;
+  };
+
+  // Helper to format image metadata
+  const getImageMetadata = (url: string) => ({
+    url,
+    width: 1200,
+    height: 630,
+    alt: siteName || "MFStack",
+  });
 
   // Generate static params for this source
   async function generateParams() {
@@ -103,14 +121,27 @@ export function createContentSource(options: ContentPageOptions) {
         ? parseInt(slug[slug.length - 1], 10)
         : 1;
       const title = pageNum > 1 ? `${listHeading} - Page ${pageNum}` : listHeading;
+      const ogImageUrl = getOgImageUrl();
+      const description = `Browse all ${contentLabel.toLowerCase()}s`;
+      const canonical = baseUrl ? `${baseUrl}${source.basePath}${pageNum > 1 ? `/page/${pageNum}` : ""}` : undefined;
+
       return transformMetadata({
         title,
-        description: `Browse all ${contentLabel.toLowerCase()}s`,
+        description,
         openGraph: {
           title,
+          description,
           type: "website",
           siteName,
+          images: ogImageUrl ? [getImageMetadata(ogImageUrl)] : undefined,
         },
+        twitter: {
+          card: "summary_large_image",
+          title,
+          description,
+          images: ogImageUrl ? [ogImageUrl] : undefined,
+        },
+        alternates: canonical ? { canonical } : undefined,
       });
     }
 
@@ -123,14 +154,27 @@ export function createContentSource(options: ContentPageOptions) {
       const tag = tags.find((t) => t.value === tagSlug);
       const tagName = tag?.label ?? tagSlug;
       const title = `${tagHeadingPrefix} ${tagName}`;
+      const description = `${contentLabel}s tagged with ${tagName}`;
+      const ogImageUrl = getOgImageUrl(["tag", tagSlug]);
+      const canonical = baseUrl ? `${baseUrl}${source.basePath}/tag/${tagSlug}` : undefined;
+
       return transformMetadata({
         title,
-        description: `${contentLabel}s tagged with ${tagName}`,
+        description,
         openGraph: {
           title,
+          description,
           type: "website",
           siteName,
+          images: ogImageUrl ? [getImageMetadata(ogImageUrl)] : undefined,
         },
+        twitter: {
+          card: "summary_large_image",
+          title,
+          description,
+          images: ogImageUrl ? [ogImageUrl] : undefined,
+        },
+        alternates: canonical ? { canonical } : undefined,
       });
     }
 
@@ -153,6 +197,10 @@ export function createContentSource(options: ContentPageOptions) {
 
       const canonical = baseUrl ? `${baseUrl}${source.basePath}/${contentSlug}` : undefined;
 
+      // Prefer generated OG image over cover image
+      const ogImageUrl = getOgImageUrl([contentSlug]);
+      const imageUrl = ogImageUrl || coverUrl;
+
       return transformMetadata({
         title,
         description,
@@ -161,13 +209,13 @@ export function createContentSource(options: ContentPageOptions) {
           description,
           type: "article",
           siteName,
-          images: coverUrl ? [{ url: coverUrl }] : undefined,
+          images: imageUrl ? [ogImageUrl ? getImageMetadata(imageUrl) : { url: imageUrl }] : undefined,
         },
         twitter: {
-          card: coverUrl ? "summary_large_image" : "summary",
+          card: imageUrl ? "summary_large_image" : "summary",
           title,
           description,
-          images: coverUrl ? [coverUrl] : undefined,
+          images: imageUrl ? [imageUrl] : undefined,
         },
         alternates: canonical ? { canonical } : undefined,
       });
