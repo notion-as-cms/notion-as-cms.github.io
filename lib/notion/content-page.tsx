@@ -148,6 +148,10 @@ export function createContentSource(options: ContentPageOptions) {
     // Tag page metadata
     if (isTagPage(pageParams) || isPaginatedTagPage(pageParams)) {
       const tagSlug = getTagSlug(pageParams);
+      if (!tagSlug) {
+        return transformMetadata({ title: "Tag Not Found" });
+      }
+
       const tags = source.tagDatabaseId
         ? await getTags(client, source.tagDatabaseId)
         : [];
